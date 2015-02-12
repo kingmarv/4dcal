@@ -1,0 +1,453 @@
+@import url(http://fonts.googleapis.com/css?family=Slabo+27px);
+@import url(http://fonts.googleapis.com/css?family=PT+Sans:400,400italic);
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family:'Slabo 27px', 'Arial';
+}
+
+#detailimg {
+    background-color:#000000;
+    position:fixed;
+    height:100%;
+    width:100%;
+    overflow:hidden;
+    z-index:10000;
+    transition:opacity 0.15s linear, margin-top 0.3s linear, height 0.3s linear;
+    display:none;
+    opacity:0;
+}
+
+#detailimg {
+    height:auto;
+    width:100%;
+    background-image:url(http://plantationparkcondos.com/wp-content/uploads/2014/05/meeting.jpg);/*http://www.discprofiles.com/blog/wp-content/uploads/2012/12/meeting-iStock.jpg);*/
+    background-size:cover;
+    background-position:center;
+    /*transition:-webkit-filter 0.5s ease, -moz-filter 0.5s ease, -o-filter 0.5s ease, -ms-filter 0.5s ease, filter 0.5s ease;
+    
+    -webkit-filter: blur(5px);
+    -moz-filter: blur(5px);
+    -o-filter: blur(5px);
+    -ms-filter: blur(5px);
+    filter: blur(5px);*/
+}
+
+#detail {
+    position:absolute;
+    height:100%;
+    width:100%;
+    z-index:10000;
+    display:none;
+    transition:0.5s ease;
+    opacity:0;
+}
+
+#detail #info {
+    background-color:rgba(0,0,0,0.5);
+    width:90%;
+    font-size:3.5em;
+    color:#ffffff;
+    padding:1% 0 1% 10%;
+}
+
+#detail #info img {
+    height:auto;
+    width:1.5%;
+    margin-right:1%;
+}
+
+#detail #info #title {
+    float:left;
+}
+
+#detail #info #status img {
+    height:auto;
+    width:3%;
+    margin-right:0;
+    margin-left:1%;
+}
+
+#detail #info #time {
+    font-size:0.5em;
+    font-family:'PT Sans', 'Arial';
+    color:#cccccc;
+}
+
+#detail #info #organizer {
+    font-family:'PT Sans', 'Arial';
+    font-size:0.5em;
+    color:#cccccc;
+}
+
+#detail #info #location {
+    font-family:'PT Sans', 'Arial';
+    font-size:0.5em;
+    color:#cccccc;
+}
+
+#detail #info #close {
+    position:fixed;
+    z-index:10001;
+    top:0.75em;
+    right:1em;
+    padding:0.25em;
+    color:#ffffff;
+    cursor:pointer;
+    font-family:"Arial";
+    font-size:0.571em;
+    transition:1s ease;
+}
+
+#calendar_wrapper {
+    background-color:#ffffff;
+    margin-top:-150%;
+    position:absolute;
+    height:100%;
+    width:100%;
+    z-index:9999;
+    transition:1s ease;
+}
+
+#calendar_wrapper #headline {
+    background-color:#04756f;
+    text-align:center;
+    color:#ffffff;
+    font-size:4em;
+    padding:0.25em 0;
+}
+
+#calendar_wrapper #headline #settings {
+    margin:-1.25em 0 0 0.25em;
+    float:left;
+    width:95%;
+}
+
+#calendar_wrapper #headline #settings img {
+    height:1.25em;
+    width:auto;
+    float:left;
+    cursor:pointer;
+}
+
+#calendar_wrapper #headline #settings #content {
+    /*height:1.03em;
+    margin-top:0.08em;
+    border-top:0.04em solid white;
+    border-bottom:0.04em solid white;
+    float:left;
+    padding:0 0.5em;*/
+    float:left;
+    height:1.4166667em;
+    background-image:url(../img/settings_middle.svg);
+    background-size:auto 100%;
+    font-size:0.75em;
+    padding:0.125em 0/*.5em*/;
+    line-height:1.5em;
+    transition:padding 1.5s ease, width 1s ease;
+    width:0;
+    overflow:hidden;
+    white-space:nowrap;
+}
+
+#calendar_wrapper #headline #settings #content img {
+    float:none;
+    margin:-0.5em 0.5em -0.3em;
+    padding:0.2em 0;
+    height:1em;
+    width:auto;
+}
+
+#calendar_wrapper #headline #text {
+    transition: opacity 1s ease;
+    height:1.25em;
+}
+
+#calendar_wrapper #headline #toggle_view {
+    float:right;
+    margin:-1.125em 1.25em 0 0;
+    padding:0 0.25em;
+    cursor:pointer;
+}
+
+#calendar_wrapper #headline #toggle_view img {
+    height:1em;
+    width:auto;
+}
+
+#calendar_wrapper #headline #new_entry {
+    float:right;
+    margin:-1.25em 0.25em 0 0;
+    padding:0 0.25em;
+    cursor:pointer;
+}
+
+#calendar_wrapper #day {
+    background-color:#bbbbbb;
+    text-align:center;
+    font-size:2.5em;
+    padding:0.1em 0;
+}
+
+#calendar_wrapper #day #back, #calendar_wrapper #day #next {
+    padding:0 0.25em;
+    cursor:pointer;
+}
+
+#calendar_wrapper #day #back {
+    float:left;
+}
+
+#calendar_wrapper #day #next {
+    float:right;
+}
+
+#calendar_wrapper #day #current {
+    transition: opacity 0.2s ease;
+}
+
+#calendar_wrapper #appointment_list {
+    background-color:#ffffff;
+    transition: opacity 0.2s ease;
+}
+
+#calendar_wrapper #appointment_list > div {
+    display:none;
+}
+
+#calendar_wrapper #appointment_list .aptlst {
+    display:block;
+    text-align:center;
+    font-size:2em;
+    border-bottom:1px solid #04756f;
+    transition:0.5s ease;
+    cursor:pointer;
+}
+
+#calendar_wrapper #appointment_list .aptlst:hover {
+    background-color:#dddddd;
+}
+
+#calendar_wrapper #appointment_list .aptlst #time {
+    font-size:0.5em;
+    color:#bbbbbb;
+    transition:0.5s ease;
+}
+
+#calendar_wrapper #appointment_list .aptlst #delete {
+    height:100%;
+    cursor:pointer;
+    opacity:0;
+    transition:0.5s ease;
+}
+
+#calendar_wrapper #appointment_list .aptlst #delete img {
+    width:50px;
+    float:right;
+    margin-top:-55px;
+}
+
+#calendar_wrapper #appointment_list .seperator {
+    text-align:center;
+    font-size:1.5em;
+    color:white;
+}
+
+#calendar_wrapper #appointment_list #early {
+    background-color:#010f47;
+}
+#calendar_wrapper #appointment_list #morning {
+    background-color:#ff2D00;
+}
+#calendar_wrapper #appointment_list #afternoon {
+    background-color:#ff8C00;
+}
+#calendar_wrapper #appointment_list #evening {
+    background-color:#d90000;
+}
+#calendar_wrapper #appointment_list #night {
+    background-color:#010f47;
+}
+
+#outer_fullscreen > div {
+    background-color:#d90000;
+    transition:1s ease;
+    height:100%;
+    width:100%;
+    display: flex;
+    display: -ms-flexbox;
+    -ms-flex-pack: center;
+    -ms-flex-align: center;
+    align-items: center;
+    justify-content: center;
+    opacity:1;
+    position:fixed;
+    z-index:999;
+    white-space:nowrap;
+    text-align:center;
+}
+
+#fullscreen {
+    position:fixed;
+    height:100%;
+    width:100%;
+}
+
+#fullscreen > div {
+    background-color:#04756f;
+    transition:1s ease;
+    height:inherit;
+    width:100%;
+    display: flex;
+    display: -ms-flexbox;
+    -ms-flex-pack: center;
+    -ms-flex-align: center;
+    align-items: center;
+    justify-content: center;
+    opacity:1;
+    position:fixed;
+    z-index:999;
+    white-space:nowrap;
+    text-align:center;
+}
+
+h1 {
+    margin:0;
+    padding:0;
+    font-size:4em;
+    color:#ffffff;
+    transition:1s ease;
+}
+
+div#welcome h1 {
+    opacity:0;
+}
+
+#fullscreen input[type="text"] {
+    font-family:'Slabo 27px', 'Arial';
+    margin:0;
+    padding:0;
+    font-size:1em;
+    color:#ffffff;
+    background-color:transparent;
+    border:none;
+    border-bottom:2px solid white;
+    text-align:center;
+}
+
+#fullscreen input[type="text"]:focus {
+    outline:none;
+}
+
+#fullscreen a {
+    color:white;
+    text-decoration:none;
+    border:0.1em solid white;
+    margin:0.2em;
+    padding:0 0.1em;
+}
+
+#fullscreen a:hover {
+    background-color:white;
+    color:#025d24;
+}
+
+#close_fullscreen {
+    position:fixed;
+    z-index:1000;
+    top:0.75em;
+    right:1em;
+    padding:0.25em;
+    color:#ffffff;
+    cursor:pointer;
+    font-family:"Arial";
+    font-size:2em;
+    display:none;+
+    transition:1s ease;
+}
+
+#sizeerror {
+    display:none;
+    background-color:black;
+    color:red;
+    font-family:'Slabo 27px', 'Arial';
+    height:100%;
+    width:100%;
+    position:fixed;
+    z-index:11000;
+}
+
+#alert {
+    position:fixed;
+    bottom:2%;
+    right:1%;
+    z-index:10999;
+    text-align:center;
+    opacity:0;
+    display:none;
+    transition: opacity 0.5s ease;
+}
+
+#alert #headline {
+    background-color:#04756f;
+    font-size:2em;
+    color:white;
+    padding:0.1em 0.25em;
+}
+
+#alert #headline .success {
+    background-color:#024d25;
+}
+
+#alert #headline .error {
+    background-color:#8f0000;
+}
+
+#alert #content {
+    background-color:#393939;
+    color:#ffffff;
+    font-size:1.5em;
+    padding:0.2em 0.5em;
+}
+
+#logo_wrapper {
+    position:absolute;
+    bottom:1%;
+    z-index:1000;
+    display: flex;
+    display: -ms-flexbox;
+    -ms-flex-pack: center;
+    -ms-flex-align: center;
+    align-items: center;
+    justify-content: center;
+    width:100%;
+    height:7.5%;
+}
+
+#logo {
+    height:100%;
+    width:auto;
+}
+
+.noselect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+@media screen and (max-height:300px) {
+    #sizeerror {
+        display:block;
+    }
+}
+
+@media screen and (max-width:500px) {
+    #sizeerror {
+        display:block;
+    }
+}
