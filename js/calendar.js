@@ -800,13 +800,11 @@ $(document).ready(function() {
     * @param {Nus0 - Starts Monthview
     *            1 - Starts Weekview
     */
-    function init(s,evar){
+    function init(s,evar,sp){
         state = s;
         events = evar;
-        var year = new Date().getFullYear();
-        var month = new Date().getUTCMonth()+1;
-        cm = month;
-        cy = year;
+        cm = parseInt(sp.slice(5,7));
+        cy = parseInt(sp.slice(0,4));
         //resize();
         $("#views #header").append("<div id='days'></div>");
         for(i=0;i<7;i++){
@@ -1059,11 +1057,11 @@ $(document).ready(function() {
     function drawDates(){
         if(state==0){
             for(i=0;i<events.length;i++){
-                createEventInMonth(events[i].id,events[i].title,events[i].start,events[i].end,events[i].status,events[i].allday);   
+                createEventInMonth(events[i].id,events[i].title,events[i].start,events[i].end,events[i].status);   
             }
         }else if(state==1){
             for(i=0;i<events.length;i++){
-                createEventInMonth(events[i].id,events[i].title,events[i].start,events[i].end,events[i].status,events[i].allday,events[i].imageurl);   
+                createEventInWeek(events[i].id,events[i].title,events[i].start,events[i].end,events[i].status,events[i].allday,events[i].imageurl);   
             }
         }
         
@@ -1115,15 +1113,12 @@ $(document).ready(function() {
         drawDates();
     }
     
-    function createEventInMonth(id,title,start,end,status,allday){
+    function createEventInMonth(id,title,start,end,status){
         var startday=start.slice(0,10);
         var endday=end.slice(0,10);
         var starttime = start.slice(11,16);
         var endtime = end.slice(11,16);
         var line1 = title,line2 = starttime+" - "+endtime;
-        if(allday){
-            line2 = "All Day";
-        }
         $("#views #"+startday).append("<div class='eventinmonth' id='event-"+id+"'><div>"+line1+"</div><div>"+line2+"</div></div>");
         color = getEventTimeData(start);
         $("#views #event-"+id).css("background-color",color[1]);
