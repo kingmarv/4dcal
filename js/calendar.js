@@ -201,12 +201,12 @@ $(document).ready(function() {
      */
     function changeFullscreen(startid, endid, endcontent, endcolor) {
         $('#fullscreen').append('<div id="'+endid+'" style="background-color:'+endcolor+'; z-index:'+(parseInt($('#'+startid).css('z-index'))-1)+'"><h1 style="opacity:0; margin-left:50%">'+endcontent+'</h1></div>');
-        $('#'+startid).css({'opacity': '0'});
-        $('#'+startid+' h1').css({'margin-left': '-50%', 'opacity': '0'});
+        $('#fullscreen #'+startid).css({'opacity': '0'});
+        $('#fullscreen #'+startid+' h1').css({'margin-left': '-50%', 'opacity': '0'});
         setTimeout(function() {
-            $('#'+endid+' h1').css({'margin-left': '0%', 'opacity': '1'});
+            $('#fullscreen #'+endid+' h1').css({'margin-left': '0%', 'opacity': '1'});
             setTimeout(function() {
-                $('#'+startid).css('display', 'none');
+                $('#fullscreen #'+startid).css('display', 'none');
             }, 1000);
         }, 100);
     }
@@ -503,6 +503,11 @@ $(document).ready(function() {
                     aptend = enddate.getFullYear() + '-' + ('0' + (enddate.getMonth()+1)).slice(-2) + '-' + ('0' + enddate.getDate()).slice(-2) + 'T' + ('0' + enddate.getHours()).slice(-2) + ':' + ('0' + enddate.getMinutes()).slice(-2);
                     aptalldaynum = '0';
                 }
+                
+                /** TIMEZONE FIX **/
+                aptstart = new Date((new Date(aptstart + 'Z').getTime())+(1000*3600*currentTimezone*-1)).toISOString().substr(0,16);
+                aptend = new Date((new Date(aptend + 'Z').getTime())+(1000*3600*currentTimezone*-1)).toISOString().substr(0,16);
+                
                 $.post('http://host.bisswanger.com/dhbw/calendar.php', {
                     'user': user,
                     'action': 'add',
@@ -545,7 +550,7 @@ $(document).ready(function() {
                             if(aptallday) {
                                 changeFullscreen('sumloading', 'summary', 'Your appointment has been saved!<br>'+tmpname+'<br>All day on '+$('#aptyear').val()+'/'+$('#aptmonth').val()+'/'+$('#aptday').val()+'!', '#024d25');
                             } else {
-                                changeFullscreen('sumloading', 'summary', 'Your appointment has been saved!<br>'+tmpname+'<br>On '+$('#aptyear').val()+'/'+$('#aptmonth').val()+'/'+$('#aptday').val()+' at '+aptstart.slice(-5)+'!', '#024d25');
+                                changeFullscreen('sumloading', 'summary', 'Your appointment has been saved!<br>'+tmpname+'<br>On '+$('#aptyear').val()+'/'+$('#aptmonth').val()+'/'+$('#aptday').val()+' at '+$('#apthour').val()+':'+$('#aptminute').val()+'!', '#024d25');
                             }
                             setTimeout(function() {
                                 state = 'calendar';
@@ -613,6 +618,8 @@ $(document).ready(function() {
                     'format': 'json',
                 }, function(data, success) {
                     $.each(data.events.events, function(i, obj) {
+                        obj.start = new Date((new Date(obj.start + 'Z').getTime())+(1000*3600*currentTimezone)).toISOString().substr(0,16);
+                        obj.end = new Date((new Date(obj.end + 'Z').getTime())+(1000*3600*currentTimezone)).toISOString().substr(0,16);
                         events.push(obj);
                     });
                     events.sort(function(a,b) {
