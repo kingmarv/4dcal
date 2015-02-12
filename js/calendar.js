@@ -59,6 +59,13 @@ $(document).ready(function() {
          */
         $('#calendar_wrapper #headline #new_entry').click(function() {
             state = "newapt1";
+            if(viewstate==0||viewstate==1) {
+                viewswerehere = true;
+                toggleViews();
+            } else {
+                viewswerehere = false;
+            }
+            
             toggleCalendar();
             clearFullscreen('name', 'What\'s going on?*<br><input id="aptname" type="text"><br><span style="font-size:0.5em">*required</span>', '#024d25');
             $('#aptname').focus();
@@ -68,6 +75,9 @@ $(document).ready(function() {
          * Close the fullscreen on click on the x.
          */
         $('#close_fullscreen').click(function() {
+            if(viewswerehere) {
+                toggleViews();
+            }
             toggleCalendar();
         });
 
@@ -249,6 +259,7 @@ $(document).ready(function() {
         if($('#calendar_wrapper').css('margin-top')=='0px') {
             $('#calendar_wrapper').css('margin-top', '-150%');
         } else {
+            state = 'calendar';
             $('#calendar_wrapper').css('margin-top', '0px');
         }
     }
@@ -288,12 +299,12 @@ $(document).ready(function() {
     }
     
     function toggleViews() {
-        if($('#views').css('margin-left')=='0px') {
-            $('#views').css('margin-left', '-150%');
+        if($('#views').css('margin-top')=='0px') {
+            $('#views').css('margin-top', '150%');
             viewstate = 3;
         } else {
             viewstate = 0;
-            $('#views').css('margin-left', '0px');
+            $('#views').css('margin-top', '0px');
         }
     }
 
