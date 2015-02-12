@@ -3,6 +3,7 @@ var user = '';
 var currentTimezone = (((new Date().getTimezoneOffset())/60)*(-1));
 var currTimezString = 'GMT'+((currentTimezone<0) ? '-' : '+')+('0'+Math.floor(Math.abs(currentTimezone))).slice(-2)+('0'+(((Math.abs(currentTimezone)-Math.floor(Math.abs(currentTimezone))))*60)).slice(-2);
 var listViewDay = 0;
+var isaa;
 var events = [];
 var currentDatetime = new Date();
 var currentDaytime;
@@ -289,7 +290,9 @@ $(document).ready(function() {
     function toggleViews() {
         if($('#views').css('margin-left')=='0px') {
             $('#views').css('margin-left', '-150%');
+            viewstate = 3;
         } else {
+            viewstate = 0;
             $('#views').css('margin-left', '0px');
         }
     }
@@ -630,6 +633,8 @@ $(document).ready(function() {
         $('#calendar_wrapper #appointment_list .aptlst').remove();
         $('#calendar_wrapper #appointment_list div').css('display', 'none');
         today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()+dayaddition, 0, 0, 0, 0);
+        isaa = today;
+        checkDateForDiff(isaa);
         thistime = new Date();
         if(dayaddition==0) {
             $('#calendar_wrapper #day #current').html('Today');
@@ -683,7 +688,7 @@ $(document).ready(function() {
     }
 
     function drawMonthView() {
-        init(0, events);
+        init(0, events, isaa);
     }
 
     function drawDetailView(id) {
@@ -740,7 +745,7 @@ $(document).ready(function() {
     
     var cm = 0;
     var cy = 0;
-    var state;
+    var viewstate;
     var rn = 0;
     var lwr = 0;
     var fwr = 0;
@@ -762,18 +767,18 @@ $(document).ready(function() {
     });
     
     $("#views #weekview").click(function(){
-        if(state==0){
+        if(viewstate==0){
             $("#views #days").prepend("<div class='time' id='time' style='float:left'>&nbsp;</div>");
             changeToWeekView(fwr);
-            state=1;
+            viewstate=1;
         }
     });
     
     $("#views #monthview").click(function(){
-        if(state==1){
+        if(viewstate==1){
             $("#views #time").remove();
             $("#views #container > div").remove();
-            state=0;
+            viewstate=0;
             createMonthView(cm,cy);
         }
     });
@@ -783,16 +788,18 @@ $(document).ready(function() {
     //});
     
     $(document).keydown(function(e){
-    if(e.keyCode == 37){
-        changeView(-1);
-    }else if(e.keyCode == 39){
-        changeView(1);
-    }else if(e.keyCode == 27){
-        $("#views #time").remove();
-        $("#views #container > div").remove();
-        state=0;
-        createMonthView(cm,cy);
-    }
+        if(viewstate!=3){
+            if(e.keyCode == 37){
+                changeView(-1);
+            }else if(e.keyCode == 39){
+                changeView(1);
+            }else if(e.keyCode == 27){
+                $("#views #time").remove();
+                $("#views #container > div").remove();
+                viewstate=0;
+                createMonthView(cm,cy);
+            }
+        }
     });
     
     
@@ -801,11 +808,11 @@ $(document).ready(function() {
     *            1 - Starts Weekview
     */
     function init(s,evar,sp){
-        state = s;
         events = evar;
-        cm = parseInt(sp.slice(5,7));
-        cy = parseInt(sp.slice(0,4));
-        //resize();
+        cm = sp.getUTCMonth() +1;
+        cy = sp.getFullYear();
+        resizeFont();
+        if(viewstate!=0 || viewstate!=1 || viewstate!=2){
         $("#views #header").append("<div id='days'></div>");
         for(i=0;i<7;i++){
             if(i!=6){
@@ -814,10 +821,11 @@ $(document).ready(function() {
                 $("#views #days").append("<div class='lastcell cell h'>"+displayDay(i)+"</div>");
             }
         }
-        
-        if(state==0){
+        }
+        viewstate = s;
+        if(viewstate==0){
             createMonthView(cm,cy);
-        }else if(state==1){
+        }else if(viewstate==1){
             createMonthView(cm,cy);
             setTimeout(function() {
                 changeToWeekView(fwr);
@@ -825,6 +833,7 @@ $(document).ready(function() {
         }
         
         $("#views .overlay").remove();
+        viewstate = 3;
     }
     
     /**
@@ -832,9 +841,18 @@ $(document).ready(function() {
     * @param {Number} c  1 - Next
     *                   -1 - Previous
     */
+    
+    function checkDateForDiff(curdate){
+        if(curdate.getUTCMonth()>cm){
+            changeView(1);
+        }else if(curdate.GetUTCMonth()<cm){
+            changeView(-1);
+        }
+    }
+    
     function changeView(c){
         $("#views #container > div").remove();
-        if(state==0){
+        if(viewstate==0){
             if(c<0){
                 cm--;
                 if(cm==0){
@@ -1007,7 +1025,7 @@ $(document).ready(function() {
     * @param   {Number}   rownumber Number of row of week in container of monthview
     */
     function changeToWeekView(rownumber){
-        state=1;
+        viewstate=1;
         var cellid;
         for(r=0;r<6;r++){
             for(f=0;f<7;f++){
@@ -1055,11 +1073,11 @@ $(document).ready(function() {
     * Gets Data of Events and Draws them into Weekview
     */
     function drawDates(){
-        if(state==0){
+        if(viewstate==0){
             for(i=0;i<events.length;i++){
                 createEventInMonth(events[i].id,events[i].title,events[i].start,events[i].end,events[i].status);   
             }
-        }else if(state==1){
+        }else if(viewstate==1){
             for(i=0;i<events.length;i++){
                 createEventInWeek(events[i].id,events[i].title,events[i].start,events[i].end,events[i].status,events[i].allday,events[i].imageurl);   
             }
