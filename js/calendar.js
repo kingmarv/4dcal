@@ -639,7 +639,7 @@ $(document).ready(function() {
     function drawListView(dayaddition) {
         $('#calendar_wrapper #appointment_list .aptlst').remove();
         $('#calendar_wrapper #appointment_list div').css('display', 'none');
-        today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()+dayaddition, 0, 0, 0, 0);
+        today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()+dayaddition, currentTimezone, 0, 0, 0);
         isaa = today;
         checkDateForDiff(isaa);
         thistime = new Date();
@@ -650,7 +650,7 @@ $(document).ready(function() {
         } else if(dayaddition==-1) {
             $('#calendar_wrapper #day #current').html('Yesterday');
         } else {
-            $('#calendar_wrapper #day #current').html(today.getFullYear() + '/' + ('0' + (today.getUTCMonth()+1)).slice(-2) + '/' + ('0' + today.getUTCDate()).slice(-2));
+            $('#calendar_wrapper #day #current').html(today.getUTCFullYear() + '/' + ('0' + (today.getUTCMonth()+1)).slice(-2) + '/' + ('0' + today.getUTCDate()).slice(-2));
         }
         thisDay = [];
         var i=0;
@@ -850,9 +850,9 @@ $(document).ready(function() {
     */
     
     function checkDateForDiff(curdate){
-        if(curdate.getUTCMonth()>cm){
+        if(curdate.getMonth()>cm){
             changeView(1);
-        }else if(curdate.GetUTCMonth()<cm){
+        }else if(curdate.getMonth()<cm){
             changeView(-1);
         }
     }
