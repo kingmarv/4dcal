@@ -344,7 +344,7 @@ $(document).ready(function() {
      */
     function resizeFont() {
         $("head > style").remove();
-        $('html > head').append('<style>h1{font-size:'+($(window).width()/400)+'em;} #calendar_wrapper #headline{font-size:'+($(window).width()/400)+'em;} #close_fullscreen{font-size:'+($(window).width()/800)+'em;}; #detail #info #close{font-size:'+($(window).width()/800)+'em;} #views #container{font-size:'+($(window).width()/400)+'em;} #views #header{font-size:'+($(window).width()/700)+'em;}</style>');
+        $('html > head').append('<style>h1{font-size:'+($(window).width()/400)+'em;} #detail{font-size:'+($(window).width()/1600)+'em;} #calendar_wrapper #headline{font-size:'+($(window).width()/400)+'em;} #close_fullscreen{font-size:'+($(window).width()/800)+'em;}; #detail #info #close{font-size:'+($(window).width()/800)+'em;} #views #container{font-size:'+($(window).width()/400)+'em;} #views #header{font-size:'+($(window).width()/700)+'em;}</style>');
         $('#views').css({'height': ($(window).height()-$('#calendar_wrapper #headline').outerHeight()) + 'px', 'top': $('#calendar_wrapper #headline').outerHeight() + 'px'});
         $('#views #container').css({'height': ($('#views').outerHeight()-$('#views #header').outerHeight()) + 'px'});
     }
