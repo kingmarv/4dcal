@@ -65,7 +65,6 @@ $(document).ready(function() {
             } else {
                 viewswerehere = false;
             }
-            
             toggleCalendar();
             clearFullscreen('name', 'What\'s going on?*<br><input id="aptname" type="text"><br><span style="font-size:0.5em">*required</span>', '#024d25');
             $('#aptname').focus();
@@ -913,7 +912,7 @@ $(document).ready(function() {
                 }
             }
             createMonthView(cm,cy);
-            changeToWeekView(rn);
+            //changeToWeekView(rn); THIS WAS THE VERY IMPORTANT CHANGE
         }
     }
     
