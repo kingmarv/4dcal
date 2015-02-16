@@ -5,6 +5,13 @@ var currTimezString = 'GMT'+((currentTimezone<0) ? '-' : '+')+('0'+Math.floor(Ma
 var listViewDay = 0;
 var isaa;
 var events = [];
+var cm = 0;
+var cy = 0;
+var viewstate;
+var rn = 0;
+var lwr = 0;
+var fwr = 0;
+var oss = 0;
 var currentDatetime = new Date();
 var currentDaytime;
 if(currentDatetime.getHours()<6) {
@@ -760,14 +767,7 @@ $(document).ready(function() {
     
     /** Toms Backstagebereich **/
     
-    var cm = 0;
-    var cy = 0;
-    var viewstate;
-    var rn = 0;
-    var lwr = 0;
-    var fwr = 0;
-    var oss = 0;
-    var events = [];
+    
     
     //$("#views").prepend("<div class='overlay'><img src='img/loading.svg' style='width:10%;height:10%;'></img></div>");
     
@@ -828,7 +828,6 @@ $(document).ready(function() {
         events = evar;
         cm = sp.getUTCMonth() +1;
         cy = sp.getFullYear();
-        resizeFont();
         if(viewstate!=0 || viewstate!=1 || viewstate!=2){
         $("#views #header").append("<div id='days'></div>");
         for(i=0;i<7;i++){
@@ -850,6 +849,7 @@ $(document).ready(function() {
         }
         
         $("#views .overlay").remove();
+        resizeFont();
         viewstate = 3;
     }
     
@@ -860,11 +860,18 @@ $(document).ready(function() {
     */
     
     function checkDateForDiff(curdate){
-        if(curdate.getMonth()>cm){
+        curmonth = curdate.getMonth()+1;
+        //console.log(curmonth);
+        if(curmonth>cm){
+            viewstate=0;
             changeView(1);
-        }else if(curdate.getMonth()<cm){
+            viewstate=3;
+        }else if(curmonth<cm){
+            viewstate=0;
             changeView(-1);
+            viewstate=3;
         }
+        //console.log("cm:"+cm);
     }
     
     function changeView(c){
@@ -884,7 +891,7 @@ $(document).ready(function() {
                 }
             }
             createMonthView(cm,cy);
-        }else{
+        }else if(viewstate==1){
             if(c<0){
                 rn--;
                 if(rn<fwr){
@@ -912,7 +919,7 @@ $(document).ready(function() {
                 }
             }
             createMonthView(cm,cy);
-            //changeToWeekView(rn); THIS WAS THE VERY IMPORTANT CHANGE
+            changeToWeekView(rn); //THIS WAS THE VERY IMPORTANT CHANGE
         }
     }
     
