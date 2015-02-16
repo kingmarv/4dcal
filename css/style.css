@@ -69,6 +69,24 @@ html, body {
     width:3%;
     margin-right:0;
     margin-left:1%;
+    margin-top:1%;
+}
+
+#detail #info #edit {
+    height:1em;
+    width:1em;
+    float:left;
+    margin-left:-6%;
+    background-color:rgba(0,0,0,0.3);
+    border-radius:50%;
+    margin-top:0.1em;
+}
+
+#detail #info #edit img {
+    width:0.5em;
+    height:0.5em;
+    margin-left:0.25em;
+    margin-bottom:0.15em;
 }
 
 #detail #info #time {
@@ -375,10 +393,15 @@ div#welcome h1 {
     background-color:black;
     color:red;
     font-family:'Slabo 27px', 'Arial';
+    font-size:2em;
     height:100%;
     width:100%;
     position:fixed;
     z-index:11000;
+    align-items:center;
+    justify-content:center;
+    -ms-flex-pack: center;
+    -ms-flex-align: center;
 }
 
 #alert {
@@ -444,12 +467,12 @@ div#welcome h1 {
 
 @media screen and (max-height:300px) {
     #sizeerror {
-        display:block;
+        display:flex;
     }
 }
 
 @media screen and (max-width:500px) {
     #sizeerror {
-        display:block;
+        display:flex;
     }
 }
