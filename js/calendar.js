@@ -777,13 +777,6 @@ $(document).ready(function() {
         changeView(1);
     });
     
-    $(".eventinmonth").on("click",function(){
-        console.log("!");
-        //rx = new RegExp("[0-9]+"); 
-        //id = parseInt(rx.exec($(this).attr("id")));
-        //drawDetailView(id);
-    });
-    
     $("#views #weekview").click(function(){
         if(viewstate==0){
             $("#views #days").prepend("<div class='time' id='time' style='float:left'>&nbsp;</div>");
@@ -959,8 +952,8 @@ $(document).ready(function() {
             cellid="r0f"+i;
             $("#views #"+cellid).css("color","grey");
             newid=pmy+"-"+(("0" + pm).slice(-2))+"-"+(("0" + dc).slice(-2));
-            $("#views #"+cellid).append("<div class='dates omonth'>"+dc+"</div>");
-            $("#views #"+cellid).append("<div id='"+newid+"' class='events pm 0e'></div>");
+            $("#views #"+cellid).append("<div class='dates omonth' id='list-"+newid+"'>"+dc+"</div>");
+            $("#views #"+cellid).append("<div id='"+newid+"' class='events pm'></div>");
             dc++;
         }
         //current month
@@ -972,11 +965,14 @@ $(document).ready(function() {
             n = date.getDay();
             cellid="r"+week+"f"+n;
             newid=y+"-"+(("0" + m).slice(-2))+"-"+(("0" + (i+1)).slice(-2));
-            $("#views #"+cellid).append("<div class='dates'>"+(i+1)+"</div>");
-            $("#views #"+cellid).append("<div id='"+newid+"' class='events 0e'></div>");
+            $("#views #"+cellid).append("<div class='dates' id='list-"+newid+"'>"+(i+1)+"</div>");
+            $("#views #"+cellid).append("<div id='"+newid+"' class='events'></div>");
             lwr=week;
             if(n==6){week++;}
         }
+        td = new Date();
+        tdid=td.getFullYear()+"-"+(("0" + (td.getMonth()+1)).slice(-2))+"-"+(("0" + (td.getDate())).slice(-2));
+        $("#list-"+tdid).css("background-color","#04756f");      
         //next month
         dc = 1;
         if(m==12){
@@ -992,12 +988,25 @@ $(document).ready(function() {
                 cellid="r"+r+"f"+f;
                 $("#views #"+cellid).css("color","grey");
                 newid=ny+"-"+(("0" + nm).slice(-2))+"-"+(("0" + dc).slice(-2));
-                $("#views #"+cellid).append("<div class='dates omonth'>"+dc+"</div>");
-                $("#views #"+cellid).append("<div id='"+newid+"' class='events nm 0e'></div>");
+                $("#views #"+cellid).append("<div class='dates omonth' id='list-"+newid+"'>"+dc+"</div>");
+                $("#views #"+cellid).append("<div id='"+newid+"' class='events nm'></div>");
                 dc++;
             }
             n=-1;
         }
+        
+        
+        $(".dates").on("click",function(){
+            id = $(this).attr("id");
+            id = id.slice(-10);
+            date1 = new Date(id);
+            date2 = new Date();
+            timeDiff = date1.getTime() - date2.getTime();
+            diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            toggleViews();
+            drawListView(diffDays);
+        });
+        
         drawDates();
     }
     
@@ -1107,6 +1116,13 @@ $(document).ready(function() {
                 createEventInWeek(events[i].id,events[i].title,events[i].start,events[i].end,events[i].status,events[i].allday,events[i].imageurl);   
             }
         }
+        
+    
+        $(".eventinmonth").on("click",function(){
+            rx = new RegExp("[0-9]+"); 
+            id = parseInt(rx.exec($(this).attr("id")));
+            drawDetailView(id);
+        });
         
     }
     
