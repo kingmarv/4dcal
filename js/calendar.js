@@ -520,7 +520,7 @@ $(document).ready(function() {
                     aptend = $('#aptyear').val()+'-'+$('#aptmonth').val()+'-'+$('#aptday').val() + 'T23:59';
                     aptalldaynum = '1';
                 } else {
-                    enddate = new Date(parseInt($('#aptyear').val()),parseInt($('#aptmonth').val()),parseInt($('#aptday').val()),parseInt($('#apthour').val())+parseInt($('#aptlhour').val()),parseInt($('#aptminute').val())+parseInt($('#aptlminutes').val()),0,0);
+                    enddate = new Date(parseInt($('#aptyear').val()),parseInt($('#aptmonth').val()-1),parseInt($('#aptday').val()),parseInt($('#apthour').val())+parseInt($('#aptlhour').val()),parseInt($('#aptminute').val())+parseInt($('#aptlminutes').val()),0,0);
                     aptstart = $('#aptyear').val()+'-'+$('#aptmonth').val()+'-'+$('#aptday').val()+'T'+$('#apthour').val()+':'+$('#aptminute').val();
                     aptend = enddate.getFullYear() + '-' + ('0' + (enddate.getMonth()+1)).slice(-2) + '-' + ('0' + enddate.getDate()).slice(-2) + 'T' + ('0' + enddate.getHours()).slice(-2) + ':' + ('0' + enddate.getMinutes()).slice(-2);
                     aptalldaynum = '0';
