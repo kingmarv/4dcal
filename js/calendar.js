@@ -999,8 +999,9 @@ $(document).ready(function() {
         $(".dates").on("click",function(){
             id = $(this).attr("id");
             id = id.slice(-10);
-            date1 = new Date(id);
+            date1 = new Date(new Date(id).getTime()-(currentTimezone*3600*1000));
             date2 = new Date();
+            console.log(date1.toString() + '#' + date2.toString());
             timeDiff = date1.getTime() - date2.getTime();
             diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
             toggleViews();
