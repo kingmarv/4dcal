@@ -820,7 +820,7 @@ $(document).ready(function() {
     */
     function init(s,evar,sp){
         events = evar;
-        cm = sp.getUTCMonth() +1;
+        cm = sp.getMonth() +1;
         cy = sp.getFullYear();
         $("#views #header #days").remove();
         $("#views #header").append("<div id='days'></div>");
@@ -841,7 +841,6 @@ $(document).ready(function() {
             }, 500);
         }
         
-        $("#views .overlay").remove();
         resizeFont();
         viewstate = 3;
     }
@@ -924,7 +923,6 @@ $(document).ready(function() {
     function createMonthView(m,y){
         $("#views .head").html(displayMonth(m-1)+' '+y);
         createContainer();
-        //console.log(cm+"/"+cy);
         
         //needed vars
         var cellid,n,week,date,fdoc,ldop,dc,cw,pmy,pm,ny,nm,newid;
@@ -995,20 +993,22 @@ $(document).ready(function() {
             n=-1;
         }
         
+        if(viewstate==0){
+            drawDates();   
+        }
         
-        $(".dates").on("click",function(){
+        
+        $("#views .dates").on("click",function(){
             id = $(this).attr("id");
             id = id.slice(-10);
             date1 = new Date(new Date(id).getTime()-(currentTimezone*3600*1000));
             date2 = new Date();
-            console.log(date1.toString() + '#' + date2.toString());
             timeDiff = date1.getTime() - date2.getTime();
             diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
             toggleViews();
-            drawListView(diffDays);
+            listViewDay = diffDays;
+            drawListView(listViewDay);
         });
-        
-        drawDates();
     }
     
     /**
@@ -1102,6 +1102,8 @@ $(document).ready(function() {
         head[5] = divs[6].slice(0,4); 
         
         $("#views .head").html(head[0]+" "+head[1]+", "+head[2]+" - "+head[3]+" "+head[4]+", "+head[5]);
+        
+        drawDates();
     }
     
     /**
@@ -1157,20 +1159,14 @@ $(document).ready(function() {
         }else if(status=="Busy"){
             $("#views #event-"+id).css("background-color","rgba(0,0,255,0.8)");
         }
-        if(allday==0){
             $("#views #event-"+id).css("margin-top",preciseStart(startpoint)+"px");
-            $("#views #event-"+id).css("height",preciseLength(id,startpoint,duration,day));
-        }else{
-            $("#views #event-"+id).css("margin-top",preciseStart(0));
-            $("#views #event-"+id).css("height",preciseLength(0,0,24,0)); 
-        }
+            $("#views #event-"+id).css("height",preciseLength(id,startpoint,duration,day,allday));
         if(imageurl!=""){
             $("#views #event-"+id).css("background-image","url('"+imageurl+"')");
             $("#views #event-"+id).css("background-size","100% auto");   
             $("#views #event-"+id).css("background-repeat","no-repeat");
         }
         oss=0;
-        drawDates();
     }
     
     function createEventInMonth(id,title,start,end,status){
@@ -1202,17 +1198,19 @@ $(document).ready(function() {
     * @param   {Number} day   Date of Event
     * @returns {Number}       Pixelvalue of Length of Event
     */
-    function preciseLength(id,start,dur,day){
+    function preciseLength(id,start,dur,day,allday){
         var unit = 37;
         var timepoint=start;
         var pix=0;
-        var step = 0.01
-        for(i=0;i<dur;i+=step){
+        var step = 0.01;
+        for(pl=0;pl<dur;pl+=step){
             pix += unit*step;
         }
         var maxheight=$("#views #eiwc").height()-preciseStart(start);
         if(pix>maxheight){
-            drawOffset(id,pix-maxheight,day);
+            if(allday!=1){
+                drawOffset(id,pix-maxheight,day);
+            }
             return (maxheight+50)+"px";
         }
         return pix+"px"; 
@@ -1249,7 +1247,7 @@ $(document).ready(function() {
             $("#views #offset-"+day).css("height",(maxheight+50)+"px");
             $("#views #offset-"+day).css("background-color",color);
             $("#views #offset-"+day).css("border-top","none");  
-            //drawOffset(id,pix-maxheight,date);
+            drawOffset(id,pix-maxheight,date);
         }else{
             $("#views #"+date).append("<div id='offset-"+day+"'></div>");
             $("#views #offset-"+day).css("height",pix+"px");

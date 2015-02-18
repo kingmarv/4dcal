@@ -76,6 +76,7 @@
     color:#ffffff;
     text-align:center;
     font-size:0.3em;
+    cursor:pointer;
 }
 
 #views .omonth{
@@ -103,6 +104,7 @@
     vertical-align: middle;
     color:#ffffff;
     border-bottom: solid 1px black;
+    cursor:pointer;
 }
 
 #views .pm .eventinmonth , #views .nm .eventinmonth{
