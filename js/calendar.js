@@ -1151,8 +1151,10 @@ $(document).ready(function() {
         $("#views #event-"+id).append("<div class='eventtitle'>"+title+"</div>");
         $("#views #event-"+id).css("position","absolute");
         $("#views #event-"+id).css("z-index",id);
+        color = getEventTimeData(start);
+        $("#views #event-"+id).css("background-color",color[1]);
         $("#views #event-"+id).css("margin-top",preciseStart(startpoint)+"px");
-        $("#views #event-"+id).css("height",preciseLength(id,startpoint,duration,day,allday));
+        $("#views #event-"+id).css("height",preciseLength(id,startpoint,duration,day,allday,color[1]));
         oss=0;
     }
     
@@ -1207,7 +1209,7 @@ $(document).ready(function() {
     * @param   {Number} day   Date of Event
     * @returns {Number}       Pixelvalue of Length of Event
     */
-    function preciseLength(id,start,dur,day,allday){
+    function preciseLength(id,start,dur,day,allday,color){
         var unit = 35.4;
         var timepoint=start;
         var pix=0;
@@ -1218,7 +1220,7 @@ $(document).ready(function() {
         var maxheight=$("#views #eiwc").height()-preciseStart(start);
         if(pix>maxheight){
             if(allday!=1){
-                drawOffset(id,(pix-maxheight),day);
+                drawOffset(id,(pix-maxheight),day,color);
             }
             return (maxheight+50)+"px";
         }
@@ -1231,7 +1233,7 @@ $(document).ready(function() {
     * @param {Number} pix  Calculated Length for Event
     * @param {Number} date Date of Event
     */
-    function drawOffset(id,pix,date){
+    function drawOffset(id,pix,date,color){
         var day = parseInt(date.slice(-2));
         var month = parseInt(date.slice(5,7));
         var year = parseInt(date.slice(0,4));
@@ -1247,14 +1249,13 @@ $(document).ready(function() {
         day = ("0"+day).slice(-2);
         month = ("0"+month).slice(-2);
         date=year+"-"+month+"-"+day;
-        color=$("#views #event-"+id).css("background-color");
         var maxheight = $("#views #eiwc").height();
         if(pix>maxheight){
             $("#views #"+date).append("<div id='offset-"+day+"'></div>");
             $("#views #offset-"+day).css("height",(maxheight+50)+"px");
             $("#views #offset-"+day).css("background-color",color);
             $("#views #offset-"+day).css("border-top","none");  
-            drawOffset(id,(pix-maxheight),date);
+            drawOffset(id,(pix-maxheight),date,color);
         }else{
             $("#views #"+date).append("<div id='offset-"+day+"'></div>");
             $("#views #offset-"+day).css("height",pix+"px");
