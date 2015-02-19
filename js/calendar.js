@@ -352,7 +352,7 @@ $(document).ready(function() {
      */
     function resizeFont() {
         $("head > style").remove();
-        $('html > head').append('<style>h1{font-size:'+($(window).width()/400)+'em;} #detail{font-size:'+($(window).width()/1600)+'em;} #calendar_wrapper #headline{font-size:'+($(window).width()/400)+'em;} #close_fullscreen{font-size:'+($(window).width()/800)+'em;}; #detail #info #close{font-size:'+($(window).width()/800)+'em;} #views #container{font-size:'+($(window).width()/400)+'em;} #views #header{font-size:'+($(window).width()/700)+'em;}</style>');
+        $('html > head').append('<style>h1{font-size:'+($(window).width()/400)+'em;} #detail{font-size:'+($(window).width()/1600)+'em;} #calendar_wrapper #headline{font-size:'+($(window).width()/400)+'em;} #close_fullscreen{font-size:'+($(window).width()/800)+'em;}; #detail #info #close{font-size:'+($(window).width()/800)+'em;} #views #container{font-size:'+($(window).width()/400)+'em;} #views #header{font-size:'+($(window).width()/700)+'em;} #views .eventinweek>div{font-size:'+($(window).width()/1600)+'em}</style>');
         $('#views').css({'height': ($(window).height()-$('#calendar_wrapper #headline').outerHeight()) + 'px', 'top': $('#calendar_wrapper #headline').outerHeight() + 'px'});
         $('#views #container').css({'height': ($('#views').outerHeight()-$('#views #header').outerHeight()) + 'px'});
     }
@@ -1112,11 +1112,11 @@ $(document).ready(function() {
     function drawDates(){
         if(viewstate==0){
             for(i=0;i<events.length;i++){
-                createEventInMonth(events[i].id,events[i].title,events[i].start,events[i].end,events[i].status);   
+                createEventInMonth(events[i].id,events[i].title,events[i].start,events[i].end);   
             }
         }else if(viewstate==1){
             for(i=0;i<events.length;i++){
-                createEventInWeek(events[i].id,events[i].title,events[i].start,events[i].end,events[i].status,events[i].allday,events[i].imageurl);   
+                createEventInWeek(events[i].id,events[i].title,events[i].start,events[i].end,events[i].allday,events[i].imageurl);   
             }
         }
         
@@ -1142,42 +1142,51 @@ $(document).ready(function() {
     * @param {String}   imageurl   Background Image for Event Container
     * @param {Array(?)} categories Categories
     */
-    function createEventInWeek(id,title,start,end,status,allday,imageurl){
+    function createEventInWeek(id,title,start,end,allday,imageurl){
         var day=start.slice(0,10);
         var startpoint=parseInt(start.slice(-5,-3));
         startpoint += (parseInt(start.slice(-2)))/60;
         var duration = calculateDuration(start,end);
         $("#views #"+day).append("<div id='event-"+id+"'></div>");
         $("#views #event-"+id).append("<div class='eventtitle'>"+title+"</div>");
-        $("#views #event-"+id).append("<div class='eventinfo'></div>");
         $("#views #event-"+id).css("position","absolute");
         $("#views #event-"+id).css("z-index",id);
-        if(status=="Free"){
-            $("#views #event-"+id).css("background-color","rgba(255,255,255,0.3)");
-        }else if(status=="Tentative"){
-            $("#views #event-"+id).css("background-color","rgba(255,51,0,0.5)");
-        }else if(status=="Busy"){
-            $("#views #event-"+id).css("background-color","rgba(0,0,255,0.8)");
-        }
-            $("#views #event-"+id).css("margin-top",preciseStart(startpoint)+"px");
-            $("#views #event-"+id).css("height",preciseLength(id,startpoint,duration,day,allday));
-        if(imageurl!=""){
-            $("#views #event-"+id).css("background-image","url('"+imageurl+"')");
-            $("#views #event-"+id).css("background-size","100% auto");   
-            $("#views #event-"+id).css("background-repeat","no-repeat");
-        }
+        $("#views #event-"+id).css("margin-top",preciseStart(startpoint)+"px");
+        $("#views #event-"+id).css("height",preciseLength(id,startpoint,duration,day,allday));
         oss=0;
     }
     
-    function createEventInMonth(id,title,start,end,status){
+    function createEventInMonth(id,title,start,end){
         var startday=start.slice(0,10);
         var endday=end.slice(0,10);
         var starttime = start.slice(11,16);
         var endtime = end.slice(11,16);
-        var line1 = title,line2 = starttime+" - "+endtime;
-        $("#views #"+startday).append("<div class='eventinmonth' id='event-"+id+"'><div>"+line1+"</div><div>"+line2+"</div></div>");
-        color = getEventTimeData(start);
-        $("#views #event-"+id).css("background-color",color[1]);
+        start = new Date(start);
+        end = new Date(end);
+        d1 = start.getTime();
+        d2 = end.getTime();
+        c=0;
+        while(d1<=d2){
+            d = start.getDate();
+            start.setDate(d+1);
+            d1 = start.getTime();
+            if(c==0){
+                line1 = title,line2 = starttime+" - 23:59";
+            }else{
+                line1 = title,line2 = " All Day ";
+                startday = startday.slice(0,8) + ("0"+(parseInt(startday.slice(-2))+1)).slice(-2);
+            }
+            $("#views #"+startday).append("<div class='eventinmonth' id='event-"+id+"'><div>"+line1+"</div><div>"+line2+"</div></div>");
+            color = getEventTimeData(start);
+            $("#views #event-"+id).css("background-color",color[1]);
+            c++;
+        }
+        if(c!=1){
+            line1 = title,line2 = "00:00 - " + endtime;
+        }else{
+            line1 = title,line2 = starttime + " - " + endtime;
+        }
+        $("#views #"+startday+" #event-"+id).html("<div>"+line1+"</div><div>"+line2+"</div>");
     }
     
     /**Calculates Pixelvalue for start point
@@ -1199,17 +1208,17 @@ $(document).ready(function() {
     * @returns {Number}       Pixelvalue of Length of Event
     */
     function preciseLength(id,start,dur,day,allday){
-        var unit = 37;
+        var unit = 35.4;
         var timepoint=start;
         var pix=0;
-        var step = 0.01;
+        var step = 0.0166;
         for(pl=0;pl<dur;pl+=step){
             pix += unit*step;
         }
         var maxheight=$("#views #eiwc").height()-preciseStart(start);
         if(pix>maxheight){
             if(allday!=1){
-                drawOffset(id,pix-maxheight,day);
+                drawOffset(id,(pix-maxheight),day);
             }
             return (maxheight+50)+"px";
         }
@@ -1227,7 +1236,7 @@ $(document).ready(function() {
         var month = parseInt(date.slice(5,7));
         var year = parseInt(date.slice(0,4));
         day++;
-        if(day>new Date(Date.UTC(year,month,0)).getDate()){
+        if(day>new Date(year,month,0).getDate()){
             day=1;
             month++;
             if(month=13){
@@ -1239,23 +1248,18 @@ $(document).ready(function() {
         month = ("0"+month).slice(-2);
         date=year+"-"+month+"-"+day;
         color=$("#views #event-"+id).css("background-color");
-        width=$("#views #event-"+id).css("width");
         var maxheight = $("#views #eiwc").height();
         if(pix>maxheight){
             $("#views #"+date).append("<div id='offset-"+day+"'></div>");
-            $("#views #offset-"+day).css("width",width);
             $("#views #offset-"+day).css("height",(maxheight+50)+"px");
             $("#views #offset-"+day).css("background-color",color);
             $("#views #offset-"+day).css("border-top","none");  
-            drawOffset(id,pix-maxheight,date);
+            drawOffset(id,(pix-maxheight),date);
         }else{
             $("#views #"+date).append("<div id='offset-"+day+"'></div>");
             $("#views #offset-"+day).css("height",pix+"px");
-            $("#views #offset-"+day).css("width",width);   
             $("#views #offset-"+day).css("background-color",color);
-            $("#views #offset-"+day).css("border-top","none");   
-            $("#views #event-"+id+" span").appendTo("#offset-"+day);
-            $("#views #event-"+id+" > .eventinfo").remove();
+            $("#views #offset-"+day).css("border-top","none");
         }
         oss=1;
     }
