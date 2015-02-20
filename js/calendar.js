@@ -1091,8 +1091,6 @@ $(document).ready(function() {
             $("#views #eiwc").append("<div class='eventinweek' id='"+divs[i]+"'></div>");
         }
         $("#views #"+divs[6]).addClass("lastday");
-        //2015-01-01
-        $("#views .dates").css("background-color","#04756f");
         var head = [];
         head[0] = displayMonth((parseInt(divs[0].slice(5,7)))-1);
         head[1] = parseInt(divs[0].slice(8,10));
@@ -1114,18 +1112,21 @@ $(document).ready(function() {
             for(i=0;i<events.length;i++){
                 createEventInMonth(events[i].id,events[i].title,events[i].start,events[i].end);   
             }
+            $(".eventinmonth").on("click",function(){
+                rx = new RegExp("[0-9]+"); 
+                id = parseInt(rx.exec($(this).attr("id")));
+                drawDetailView(id);
+            });
         }else if(viewstate==1){
             for(i=0;i<events.length;i++){
                 createEventInWeek(events[i].id,events[i].title,events[i].start,events[i].end,events[i].allday,events[i].imageurl);   
             }
+            $(".eventinweek").on("click",function(){
+                rx = new RegExp("[0-9]+"); 
+                id = parseInt(rx.exec($(this).attr("class")));
+                drawDetailView(id);
+            });
         }
-        
-    
-        $(".eventinmonth").on("click",function(){
-            rx = new RegExp("[0-9]+"); 
-            id = parseInt(rx.exec($(this).attr("id")));
-            drawDetailView(id);
-        });
         
     }
     
@@ -1147,14 +1148,14 @@ $(document).ready(function() {
         var startpoint=parseInt(start.slice(-5,-3));
         startpoint += (parseInt(start.slice(-2)))/60;
         var duration = calculateDuration(start,end);
-        $("#views #"+day).append("<div id='event-"+id+"'></div>");
-        $("#views #event-"+id).append("<div class='eventtitle'>"+title+"</div>");
-        $("#views #event-"+id).css("position","absolute");
-        $("#views #event-"+id).css("z-index",id);
+        $("#views #"+day).append("<div class='event-"+id+"'></div>");
+        $("#views .event-"+id).append("<div class='eventtitle'>"+title+"</div>");
+        $("#views .event-"+id).css("position","absolute");
+        $("#views .event-"+id).css("z-index",id);
         color = getEventTimeData(start);
-        $("#views #event-"+id).css("background-color",color[1]);
-        $("#views #event-"+id).css("margin-top",preciseStart(startpoint)+"px");
-        $("#views #event-"+id).css("height",preciseLength(id,startpoint,duration,day,allday,color[1]));
+        $("#views .event-"+id).css("background-color",color[1]);
+        $("#views .event-"+id).css("margin-top",preciseStart(startpoint)+"px");
+        $("#views .event-"+id).css("height",preciseLength(id,startpoint,duration,day,allday,color[1]));
         oss=0;
     }
     
@@ -1251,7 +1252,7 @@ $(document).ready(function() {
         date=year+"-"+month+"-"+day;
         var maxheight = $("#views #eiwc").height();
         if(pix>maxheight){
-            $("#views #"+date).append("<div id='offset-"+day+"'></div>");
+            $("#views #"+date).append("<div id='offset-"+day+"' class='event-"+id+"'></div>");
             $("#views #offset-"+day).css("height",(maxheight+50)+"px");
             $("#views #offset-"+day).css("background-color",color);
             $("#views #offset-"+day).css("border-top","none");  
