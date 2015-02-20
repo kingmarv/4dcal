@@ -1180,15 +1180,15 @@ $(document).ready(function() {
         var endday=end.slice(0,10);
         var starttime = start.slice(11,16);
         var endtime = end.slice(11,16);
-        start = new Date(start);
+        startd = new Date(start);
         end = new Date(end);
-        d1 = start.getTime();
+        d1 = startd.getTime();
         d2 = end.getTime();
         c=0;
         while(d1<=d2){
-            d = start.getDate();
-            start.setDate(d+1);
-            d1 = start.getTime();
+            d = startd.getDate();
+            startd.setDate(d+1);
+            d1 = startd.getTime();
             if(c==0){
                 line1 = title,line2 = starttime+" - 23:59";
             }else{
