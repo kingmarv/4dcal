@@ -54,22 +54,55 @@ html, body {
     padding:1% 0 1% 10%;
 }
 
+#detail #info > div {
+    padding:1px;
+}
+
 #detail #info img {
     height:auto;
     width:1.5%;
     margin-right:1%;
 }
 
+#detail #info input[type="text"] {
+    font-size:inherit;
+    font-family:inherit;
+    width:auto;
+    background-color:transparent;
+    border:none;
+    color:white;
+    text-align:center;
+    transition:width 0.5s ease, background-color 0.5s ease;
+}
+
+#detail #info input[type="text"]:focus {
+    border:none;
+    outline:none;
+}
+
+#detail #info #measure {
+    margin-top:-10000%;
+    position:fixed;
+    left:0;
+    padding:0 10px;
+}
+
 #detail #info #title {
     float:left;
+    margin-right:1%;
+}
+
+#detail #info #status {
+    padding-left:1%;
 }
 
 #detail #info #status img {
-    height:auto;
+    height:3%;
     width:3%;
     margin-right:0;
-    margin-left:1%;
     margin-top:1%;
+    padding:0 0;
+    transition:width 0.25s ease, background-color 0.25s ease, padding 0.25s ease;
 }
 
 #detail #info #edit {
@@ -77,9 +110,11 @@ html, body {
     width:1em;
     float:left;
     margin-left:-6%;
-    background-color:rgba(0,0,0,0.3);
+    background-color:transparent;
     border-radius:50%;
     margin-top:0.1em;
+    cursor:pointer;
+    transition:transform 0.25s ease, background-color 0.25s ease;
 }
 
 #detail #info #edit img {
@@ -95,15 +130,27 @@ html, body {
     color:#cccccc;
 }
 
+#detail #info #time input[type="text"] {
+    color:#cccccc;
+}
+
 #detail #info #organizer {
     font-family:'PT Sans', 'Arial';
     font-size:0.5em;
     color:#cccccc;
 }
 
+#detail #info #organizer input[type="text"] {
+    color:#cccccc;
+}
+
 #detail #info #location {
     font-family:'PT Sans', 'Arial';
     font-size:0.5em;
+    color:#cccccc;
+}
+
+#detail #info #location input[type="text"] {
     color:#cccccc;
 }
 
@@ -118,6 +165,12 @@ html, body {
     font-family:"Arial";
     font-size:0.571em;
     transition:1s ease;
+}
+
+#detail #info .edithover:hover {
+    border:1px dotted white;
+    padding:0;
+    cursor:pointer;
 }
 
 #calendar_wrapper {

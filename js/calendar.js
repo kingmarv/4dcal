@@ -187,6 +187,95 @@ $(document).ready(function() {
             $(this).find('#delete').css('opacity', '0');
             $(this).find('#time').css('color', '#bbbbbb');
         });
+        
+        /** EDIT FUNCTION FOCUSSES **/
+        var editchecked = false;
+        $('#detail #info #edit').click(function() {
+            if(editchecked) {
+                $(this).css({'transform': 'rotate(-360deg) scale(0)', 'background-color': 'transparent'});
+                setTimeout(function() {
+                    $('#detail #info #edit img').attr('src', 'img/edit.svg');
+                    $('#detail #info #edit').css({'transform': 'rotate(0deg) scale(1)'});
+                }, 250);
+                
+                //Disable inputs
+                $('#detail #info input[type="text"]').attr('disabled', 'true');
+                $('#detail #info #status').off('click');
+            } else {
+                cAlert('Edit enabled', 'Just click on the entries you want to edit.<br>Afterwards, click on the save icon.', 3500);
+                $(this).css({'transform': 'rotate(-360deg) scale(0)'});
+                setTimeout(function() {
+                    $('#detail #info #edit img').attr('src', 'img/save.svg');
+                    $('#detail #info #edit').css({'transform': 'rotate(-720deg) scale(1)', 'background-color': 'rgba(0,0,0,0.3)'});
+                }, 250);
+                
+                //Enable inputs
+                $('#detail #info input[type="text"]').removeAttr('disabled');
+                $('#detail #info #status').click(toggleStatus);
+            }
+            editchecked = !editchecked;
+        });
+        
+        $('#detail #info #title').focusin(function() {
+            $(this).css({'width': '90%', 'background-color': 'rgba(0,0,0,0.3)'});
+        });
+        
+        $('#detail #info #title').focusout(function() {
+            $('#detail #info #measure').css({'font-size': '1em', 'font-family': '"Slabo 27px", "Arial"'});
+            $('#detail #info #measure').html($('#detail #title').val());
+            $(this).css({'width': $('#detail #info #measure').width(), 'background-color': 'transparent'});
+        });
+        
+        $.each($('#detail #info #time input[type="text"]'), function(i, obj) {
+            $(obj).focusin(function() {
+                $(this).css({'width': '7.5%', 'background-color': 'rgba(0,0,0,0.3)'});
+            });
+            
+            $(obj).focusout(function() {
+                $('#detail #info #measure').css({'font-size': '0.5em', 'font-family': '"PT Sans", "Arial"'});
+                $('#detail #info #measure').html($(this).val());
+                $(this).css({'width': $('#detail #info #measure').width(), 'background-color': 'transparent'});
+            });
+        });
+        
+        $.each($('#detail #info #location input[type="text"]'), function(i, obj) {
+            $(obj).focusin(function() {
+                $(obj).css({'width': '90%', 'background-color': 'rgba(0,0,0,0.3)'});
+            });
+            
+            $(obj).focusout(function() {
+                $('#detail #info #measure').css({'font-size': '0.5em', 'font-family': '"PT Sans", "Arial"'});
+                $('#detail #info #measure').html($(obj).val());
+                $(obj).css({'width': $('#detail #info #measure').width(), 'background-color': 'transparent'});
+            });
+        });
+        
+        $.each($('#detail #info #organizer input[type="text"]'), function(i, obj) {
+            $(obj).focusin(function() {
+                $(obj).css({'width': '45%', 'background-color': 'rgba(0,0,0,0.3)'});
+            });
+            
+            $(obj).focusout(function() {
+                $('#detail #info #measure').css({'font-size': '0.5em', 'font-family': '"PT Sans", "Arial"'});
+                if($(obj).val()!='') {
+                    $('#detail #info #measure').html($(obj).val());
+                } else {
+                    $('#detail #info #measure').html('no website');
+                }
+                $(obj).css({'width': $('#detail #info #measure').width(), 'background-color': 'transparent'});
+            });
+        });
+        
+        var stattoggle = true;
+        function toggleStatus(event) {
+            if(stattoggle) {
+                $(this).find('img').css({'width': '3%', 'background-color': 'rgba(0,0,0,0.3)', 'padding': '0 0.5%'});
+            } else {
+                $(this).find('img:not(#'+event.target.id+')').css({'width': '0'});
+                $(this).find('img').css({'background-color': 'transparent', 'padding': '0 0'});
+            }
+            stattoggle = !stattoggle;
+        };
     });
 
     /** SVG ANIMATIONS **/
@@ -712,18 +801,30 @@ $(document).ready(function() {
         state = 'detail_'+id;
         $.each(events, function(i, element) {
             if(element.id==id) {
-                $('#detail #title').html(element.title);
+                $('#detail #title').val(element.title);
+                $('#detail #status img').css({'width': '0px'});
                 if(element.status=='Free') {
-                    $('#detail #status img').attr('src', 'img/free.svg');
+                    $('#detail #status img#free').css({'width': '3%'});
                 } else if(element.status=='Busy') {
-                    $('#detail #status img').attr('src', 'img/busy.svg');
+                    $('#detail #status img#busy').css({'width': '3%'});
                 } else {
-                    $('#detail #status img').attr('src', 'img/tentative.svg');
+                    $('#detail #status img#tentative').css({'width': '3%'});
                 }
-                tmpeventstartdate = new Date(element.start);
-                $('#detail #time #text').html(tmpeventstartdate.getFullYear() + '/' + ('0' + (tmpeventstartdate.getUTCMonth()+1)).slice(-2) + '/' + ('0' + tmpeventstartdate.getUTCDate()).slice(-2) + ' | ' + element.start.slice(-5) + ' - ' + element.end.slice(-5));
-                $('#detail #location #text').html(element.location);
-                $('#detail #organizer #text').html(element.organizer + ' | ' + ((element.webpage=='') ? 'no website' : element.webpage));
+                tmpeventstartdate = new Date(new Date(element.start+'Z').getTime()-(3600*1000*currentTimezone));
+                tmpeventenddate = new Date(new Date(element.end+'Z').getTime()-(3600*1000*currentTimezone));
+                $('#detail #time #text #startdatey').val(tmpeventstartdate.getFullYear());
+                $('#detail #time #text #startdatem').val(('0' + (tmpeventstartdate.getMonth()+1)).slice(-2));
+                $('#detail #time #text #startdated').val(('0' + tmpeventstartdate.getDate()).slice(-2));
+                $('#detail #time #text #starttimeh').val(('0' + tmpeventstartdate.getHours()).slice(-2));
+                $('#detail #time #text #starttimem').val(('0' + tmpeventstartdate.getMinutes()).slice(-2));
+                $('#detail #time #text #enddatey').val(tmpeventenddate.getFullYear());
+                $('#detail #time #text #enddatem').val(('0' + (tmpeventenddate.getMonth()+1)).slice(-2));
+                $('#detail #time #text #enddated').val(('0' + tmpeventenddate.getDate()).slice(-2));
+                $('#detail #time #text #endtimeh').val(('0' + tmpeventenddate.getHours()).slice(-2));
+                $('#detail #time #text #endtimem').val(('0' + tmpeventenddate.getMinutes()).slice(-2));
+                $('#detail #location #text #locin').val(element.location);
+                $('#detail #organizer #text #orgin').val(element.organizer);
+                $('#detail #organizer #text #website').val(element.webpage);
                 $('#detailimg').css('background-image', 'url(' + ((element.imageurl=='') ? 'img/detail_standard.png' : element.imageurl) + ')');                
                 return false;
             }
@@ -736,6 +837,24 @@ $(document).ready(function() {
         setTimeout(function() {
             $('#detailimg').css({'opacity': '1', 'margin-top': '0', 'height': '100%'});
             setTimeout(function() {
+                $('#detail #info #measure').css({'font-size': '1em', 'font-family': '"Slabo 27px", "Arial"'});
+                $('#detail #info #measure').html($('#detail #title').val());
+                $('#detail #title').width($('#detail #info #measure').width());
+                $('#detail #info #measure').css({'font-size': '0.5em', 'font-family': '"PT Sans", "Arial"'});
+                $.each($('#detail #time input[type="text"]'), function(i, obj) {
+                    $('#detail #info #measure').html($(obj).val());
+                    $(obj).width($('#detail #info #measure').width());
+                });
+                $('#detail #info #measure').html($('#detail #info #location input[type="text"]').val());
+                $('#detail #info #location input[type="text"]').width($('#detail #info #measure').width());
+                $.each($('#detail #organizer input[type="text"]'), function(i, obj) {
+                    if($(obj).val()!='') {
+                        $('#detail #info #measure').html($(obj).val());
+                    } else {
+                        $('#detail #info #measure').html('no website');
+                    }
+                    $(obj).width($('#detail #info #measure').width());
+                });
                 $('#detail').css({'opacity': '1', 'margin-top': '0px'});
             }, 300);
         }, 1);
@@ -758,6 +877,27 @@ $(document).ready(function() {
         }, 500);
     }
     
+    /**
+     * This function measures the font size of a given font. Thanks to nrabinowitz from stackoverflow!
+     * @param   {String} txt  The text which should be measured
+     * @param   {String} font The font which is used to display the text
+     * @returns {Object} Measure Object which contains width and height of text
+     */
+    function measureText(txt, font) {
+        var id = 'text-width-tester',
+            $tag = $('#' + id);
+        if (!$tag.length) {
+            $tag = $('<span id="' + id + '" style="display:none;font:' + font + ';">' + txt + '</span>');
+            $('body').append($tag);
+        } else {
+            $tag.css({font:font}).html(txt);
+        }
+        return {
+            width: $tag.width(),
+            height: $tag.height()
+        }
+    }
+    
     /** Toms Backstagebereich **/
     
     var cm = 0;
@@ -767,7 +907,6 @@ $(document).ready(function() {
     var lwr = 0;
     var fwr = 0;
     var oss = 0;
-    var events = [];
     
     //$("#views").prepend("<div class='overlay'><img src='img/loading.svg' style='width:10%;height:10%;'></img></div>");
     

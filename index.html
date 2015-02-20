@@ -15,10 +15,11 @@
         <div id="detailimg"><!--<img src="http://plantationparkcondos.com/wp-content/uploads/2014/05/meeting.jpg">--></div>
         <div id="detail">
             <div id="info">
-                <div id="edit"><img src="img/edit.svg"></div><div id="title">Meeting with Mats</div><div id="status"><img src="img/free.svg"></div>
-                <div id="time"><img src="img/time.svg"><span id="text">08:00 - 12:00</span></div>
-                <div id="location"><img src="img/location.svg"><span id="text">House of Greens</span></div>
-                <div id="organizer"><img src="img/internet.svg"><span id="text">mats@4dialects.com | 4dialects.com</span></div>
+                <span id="measure">Meeting with Mats</span>
+                <div id="edit"><img src="img/edit.svg"></div><!--<div id="title" style="display:none">Meeting with Mats</div>--><input id="title" type="text" value="Meeting with Mats" maxlength="50" disabled><div id="status"><img id="free" src="img/free.svg"><img id="busy" src="img/busy.svg"><img id="tentative" src="img/tentative.svg"></div>
+                <div id="time"><img src="img/time.svg"><!--<span id="text">08:00 - 12:00</span>--><span id="text"><input id="startdatey" type="text" value="2014" maxlength="4" disabled>/<input id="startdatem" type="text" value="12" maxlength="2" disabled>/<input id="startdated" type="text" value="20" maxlength="2" disabled> | <input id="starttimeh" type="text" value="08" maxlength="2" disabled>:<input id="starttimem" type="text" value="00" maxlength="2" disabled> - <input id="enddatey" type="text" value="2014" maxlength="4" disabled>/<input id="enddatem" type="text" value="12" maxlength="2" disabled>/<input id="enddated" type="text" value="20" maxlength="2" disabled> | <input id="endtimeh" type="text" value="08" maxlength="2" disabled>:<input id="endtimem" type="text" value="00" maxlength="2" disabled></span></div>
+                <div id="location"><img src="img/location.svg"><span id="text"><input id="locin" type="text" val="House of Greens" maxlength="50" disabled></span></div>
+                <div id="organizer"><img src="img/internet.svg"><span id="text"><input id="orgin" type="text" val="mats@4dialects.com" maxlength="50" disabled> | <input id="website" type="text" val="4dialects.com" maxlength="100" disabled placeholder="no website"></span></div>
                 <div id="close">X</div>
             </div>
         </div>
