@@ -1112,7 +1112,7 @@ $(document).ready(function() {
             for(i=0;i<events.length;i++){
                 createEventInMonth(events[i].id,events[i].title,events[i].start,events[i].end);   
             }
-            $(".eventinmonth").on("click",function(){
+            $(".eventinmonth > div").on("click",function(){
                 rx = new RegExp("[0-9]+"); 
                 id = parseInt(rx.exec($(this).attr("id")));
                 drawDetailView(id);
@@ -1121,7 +1121,23 @@ $(document).ready(function() {
             for(i=0;i<events.length;i++){
                 createEventInWeek(events[i].id,events[i].title,events[i].start,events[i].end,events[i].allday,events[i].imageurl);   
             }
-            $(".eventinweek").on("click",function(){
+            
+            $(".eventinweek").each(function (){
+                co = 0;
+                day = $(this).attr("id");
+                $("#"+day+">div").each(function (){
+                    co++;
+                    if(co>1){
+                        ec = $(this).attr("class");  
+                        console.log(ec);
+                        $("#views #"+day+"> div").css("width","45%"); 
+                        $("#views #"+day+"> div").css("float","left");
+                        $("#views #"+day+"> ."+ec).css("margin-left","55%"); 
+                    }
+                });
+            });
+            
+            $(".eventinweek > div").on("click",function(){
                 rx = new RegExp("[0-9]+"); 
                 id = parseInt(rx.exec($(this).attr("class")));
                 drawDetailView(id);
@@ -1129,6 +1145,7 @@ $(document).ready(function() {
         }
         
     }
+    
     
     /**Creates Event in Weekview based on multiple Informations:
     * @param {Number}   id         ID
@@ -1155,8 +1172,7 @@ $(document).ready(function() {
         color = getEventTimeData(start);
         $("#views .event-"+id).css("background-color",color[1]);
         $("#views .event-"+id).css("margin-top",preciseStart(startpoint)+"px");
-        $("#views .event-"+id).css("height",preciseLength(id,startpoint,duration,day,allday,color[1]));
-        oss=0;
+        $("#views .event-"+id).css("height",preciseHeight(id,startpoint,duration,day,allday,color[1]));
     }
     
     function createEventInMonth(id,title,start,end){
@@ -1210,7 +1226,7 @@ $(document).ready(function() {
     * @param   {Number} day   Date of Event
     * @returns {Number}       Pixelvalue of Length of Event
     */
-    function preciseLength(id,start,dur,day,allday,color){
+    function preciseHeight(id,start,dur,day,allday,color){
         var unit = 35.4;
         var timepoint=start;
         var pix=0;
