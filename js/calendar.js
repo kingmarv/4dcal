@@ -1114,7 +1114,7 @@ $(document).ready(function() {
             }
             $(".eventinmonth").on("click",function(){
                 rx = new RegExp("[0-9]+"); 
-                id = parseInt(rx.exec($(this).attr("id")));
+                id = parseInt(rx.exec($(this).attr("class")));
                 drawDetailView(id);
             });
         }else if(viewstate==1){
@@ -1179,9 +1179,9 @@ $(document).ready(function() {
                 line1 = title,line2 = " All Day ";
                 startday = startday.slice(0,8) + ("0"+(parseInt(startday.slice(-2))+1)).slice(-2);
             }
-            $("#views #"+startday).append("<div class='eventinmonth' id='event-"+id+"'><div>"+line1+"</div><div>"+line2+"</div></div>");
+            $("#views #"+startday).append("<div class='eventinmonth event-"+id+"'><div>"+line1+"</div><div>"+line2+"</div></div>");
             color = getEventTimeData(start);
-            $("#views #event-"+id).css("background-color",color[1]);
+            $("#views .event-"+id).css("background-color",color[1]);
             c++;
         }
         if(c!=1){
@@ -1189,7 +1189,7 @@ $(document).ready(function() {
         }else{
             line1 = title,line2 = starttime + " - " + endtime;
         }
-        $("#views #"+startday+" #event-"+id).html("<div>"+line1+"</div><div>"+line2+"</div>");
+        $("#views #"+startday+" .event-"+id).html("<div>"+line1+"</div><div>"+line2+"</div>");
     }
     
     /**Calculates Pixelvalue for start point
