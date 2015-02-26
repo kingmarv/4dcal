@@ -478,7 +478,7 @@ $(document).ready(function() {
      */
     function resizeFont() {
         $("head > style").remove();
-        $('html > head').append('<style>h1{font-size:'+($(window).width()/400)+'em;} #detail{font-size:'+($(window).width()/1600)+'em;} #calendar_wrapper #headline{font-size:'+($(window).width()/400)+'em;} #close_fullscreen{font-size:'+($(window).width()/800)+'em;}; #detail #info #close{font-size:'+($(window).width()/800)+'em;} #views #container{font-size:'+($(window).width()/400)+'em;} #views #header{font-size:'+($(window).width()/700)+'em;}</style>');
+        $('html > head').append('<style>h1{font-size:'+($(window).width()/400)+'em;} #detail{font-size:'+($(window).width()/1600)+'em;} #calendar_wrapper #headline{font-size:'+($(window).width()/400)+'em;} #close_fullscreen{font-size:'+($(window).width()/800)+'em;}; #detail #info #close{font-size:'+($(window).width()/800)+'em;} #views #container{font-size:'+($(window).width()/400)+'em;} #views #header{font-size:'+($(window).width()/700)+'em;} #views .eventinweek>div{font-size:'+($(window).width()/1600)+'em}</style>');
         $('#views').css({'height': ($(window).height()-$('#calendar_wrapper #headline').outerHeight()) + 'px', 'top': $('#calendar_wrapper #headline').outerHeight() + 'px'});
         $('#views #container').css({'height': ($('#views').outerHeight()-$('#views #header').outerHeight()) + 'px'});
     }
@@ -646,7 +646,7 @@ $(document).ready(function() {
                     aptend = $('#aptyear').val()+'-'+$('#aptmonth').val()+'-'+$('#aptday').val() + 'T23:59';
                     aptalldaynum = '1';
                 } else {
-                    enddate = new Date(parseInt($('#aptyear').val()),parseInt($('#aptmonth').val()),parseInt($('#aptday').val()),parseInt($('#apthour').val())+parseInt($('#aptlhour').val()),parseInt($('#aptminute').val())+parseInt($('#aptlminutes').val()),0,0);
+                    enddate = new Date(parseInt($('#aptyear').val()),parseInt($('#aptmonth').val()-1),parseInt($('#aptday').val()),parseInt($('#apthour').val())+parseInt($('#aptlhour').val()),parseInt($('#aptminute').val())+parseInt($('#aptlminutes').val()),0,0);
                     aptstart = $('#aptyear').val()+'-'+$('#aptmonth').val()+'-'+$('#aptday').val()+'T'+$('#apthour').val()+':'+$('#aptminute').val();
                     aptend = enddate.getFullYear() + '-' + ('0' + (enddate.getMonth()+1)).slice(-2) + '-' + ('0' + enddate.getDate()).slice(-2) + 'T' + ('0' + enddate.getHours()).slice(-2) + ':' + ('0' + enddate.getMinutes()).slice(-2);
                     aptalldaynum = '0';
@@ -871,17 +871,28 @@ $(document).ready(function() {
                 $('#detail #location #text #locin').val(element.location);
                 $('#detail #organizer #text #orgin').val(element.organizer);
                 $('#detail #organizer #text #website').val(element.webpage);
-                $('#detailimg').css('background-image', 'url(' + ((element.imageurl=='') ? 'img/detail_standard.png' : element.imageurl) + ')');                
+                $('#detailimg').css('background-image', 'url(' + ((element.imageurl=='') ? 'img/detail_standard.png' : element.imageurl) + ')');
                 return false;
             }
         });
         /**ANI**/
+        if(viewstate==3) {
+            goheight = $('#calendar_wrapper #appointment_list #'+id).height();
+            gowidth = $(window).width();
+            gooffsettop = $('#calendar_wrapper #appointment_list #'+id).offset().top
+            gooffsetleft = 0;
+        } else if(viewstate==0) {
+            goheight = $('#views .event-'+id).height();
+            gowidth = $('#views .event-'+id).width();
+            gooffsettop = $('#views .event-'+id).offset().top;
+            gooffsetleft = $('#views .event-'+id).offset().left;
+        }
         $('#detail').css('display', 'block');
         $('#detail').css({'margin-top': '-' + $('#detail #info').outerHeight() + 'px'});
-        $('#detailimg').css({'height': $('#calendar_wrapper #appointment_list #'+id).height() + 'px', 'margin-top': $('#calendar_wrapper #appointment_list #'+id).offset().top + 'px', 'display': 'block'});
+        $('#detailimg').css({'height': goheight + 'px', 'width': gowidth + 'px', 'margin-left' : gooffsetleft + 'px', 'margin-top': gooffsettop + 'px', 'display': 'block'});
 
         setTimeout(function() {
-            $('#detailimg').css({'opacity': '1', 'margin-top': '0', 'height': '100%'});
+            $('#detailimg').css({'opacity': '1', 'margin-top': '0', 'margin-left': '0',  'height': '100%', 'width': '100%'});
             setTimeout(function() {
                 $('#detail #info #measure').css({'font-size': '1em', 'font-family': '"Slabo 27px", "Arial"'});
                 $('#detail #info #measure').html($('#detail #title').val());
@@ -910,8 +921,19 @@ $(document).ready(function() {
         id = state.split('_')[1];
         state = 'calendar';
         $('#detail').css({'opacity': '0', 'margin-top': '-' + $('#detail #info').outerHeight() + 'px'});
+        if(viewstate==3) {
+            goheight = $('#calendar_wrapper #appointment_list #'+id).height();
+            gowidth = $(window).width();
+            gooffsettop = $('#calendar_wrapper #appointment_list #'+id).offset().top
+            gooffsetleft = 0;
+        } else if(viewstate==0) {
+            goheight = $('#views .event-'+id).height();
+            gowidth = $('#views .event-'+id).width();
+            gooffsettop = $('#views .event-'+id).offset().top;
+            gooffsetleft = $('#views .event-'+id).offset().left;
+        }
         setTimeout(function() {
-            $('#detailimg').css({'height': $('#calendar_wrapper #appointment_list #'+id).height() + 'px', 'margin-top': $('#calendar_wrapper #appointment_list #'+id).offset().top + 'px'});
+            $('#detailimg').css({'height': goheight + 'px', 'width': gowidth + 'px', 'margin-left': gooffsetleft + 'px', 'margin-top': gooffsettop + 'px'});
             setTimeout(function() {
                 $('#detailimg').css('opacity', '0');
                 setTimeout(function() {
@@ -952,13 +974,6 @@ $(document).ready(function() {
         
     $("#views #forward").click(function(){
         changeView(1);
-    });
-    
-    $(".eventinmonth").on("click",function(){
-        console.log("!");
-        //rx = new RegExp("[0-9]+"); 
-        //id = parseInt(rx.exec($(this).attr("id")));
-        //drawDetailView(id);
     });
     
     $("#views #weekview").click(function(){
@@ -1004,7 +1019,7 @@ $(document).ready(function() {
     */
     function init(s,evar,sp){
         events = evar;
-        cm = sp.getUTCMonth() +1;
+        cm = sp.getMonth() +1;
         cy = sp.getFullYear();
         $("#views #header #days").remove();
         $("#views #header").append("<div id='days'></div>");
@@ -1025,7 +1040,6 @@ $(document).ready(function() {
             }, 500);
         }
         
-        $("#views .overlay").remove();
         resizeFont();
         viewstate = 3;
     }
@@ -1108,7 +1122,6 @@ $(document).ready(function() {
     function createMonthView(m,y){
         $("#views .head").html(displayMonth(m-1)+' '+y);
         createContainer();
-        //console.log(cm+"/"+cy);
         
         //needed vars
         var cellid,n,week,date,fdoc,ldop,dc,cw,pmy,pm,ny,nm,newid;
@@ -1136,8 +1149,8 @@ $(document).ready(function() {
             cellid="r0f"+i;
             $("#views #"+cellid).css("color","grey");
             newid=pmy+"-"+(("0" + pm).slice(-2))+"-"+(("0" + dc).slice(-2));
-            $("#views #"+cellid).append("<div class='dates omonth'>"+dc+"</div>");
-            $("#views #"+cellid).append("<div id='"+newid+"' class='events pm 0e'></div>");
+            $("#views #"+cellid).append("<div class='dates omonth' id='list-"+newid+"'>"+dc+"</div>");
+            $("#views #"+cellid).append("<div id='"+newid+"' class='events pm'></div>");
             dc++;
         }
         //current month
@@ -1149,11 +1162,14 @@ $(document).ready(function() {
             n = date.getDay();
             cellid="r"+week+"f"+n;
             newid=y+"-"+(("0" + m).slice(-2))+"-"+(("0" + (i+1)).slice(-2));
-            $("#views #"+cellid).append("<div class='dates'>"+(i+1)+"</div>");
-            $("#views #"+cellid).append("<div id='"+newid+"' class='events 0e'></div>");
+            $("#views #"+cellid).append("<div class='dates' id='list-"+newid+"'>"+(i+1)+"</div>");
+            $("#views #"+cellid).append("<div id='"+newid+"' class='events'></div>");
             lwr=week;
             if(n==6){week++;}
         }
+        td = new Date();
+        tdid=td.getFullYear()+"-"+(("0" + (td.getMonth()+1)).slice(-2))+"-"+(("0" + (td.getDate())).slice(-2));
+        $("#list-"+tdid).css("background-color","#04756f");      
         //next month
         dc = 1;
         if(m==12){
@@ -1169,13 +1185,29 @@ $(document).ready(function() {
                 cellid="r"+r+"f"+f;
                 $("#views #"+cellid).css("color","grey");
                 newid=ny+"-"+(("0" + nm).slice(-2))+"-"+(("0" + dc).slice(-2));
-                $("#views #"+cellid).append("<div class='dates omonth'>"+dc+"</div>");
-                $("#views #"+cellid).append("<div id='"+newid+"' class='events nm 0e'></div>");
+                $("#views #"+cellid).append("<div class='dates omonth' id='list-"+newid+"'>"+dc+"</div>");
+                $("#views #"+cellid).append("<div id='"+newid+"' class='events nm'></div>");
                 dc++;
             }
             n=-1;
         }
-        drawDates();
+        
+        if(viewstate==0){
+            drawDates();   
+        }
+        
+        
+        $("#views .dates").on("click",function(){
+            id = $(this).attr("id");
+            id = id.slice(-10);
+            date1 = new Date(new Date(id).getTime()-(currentTimezone*3600*1000));
+            date2 = new Date();
+            timeDiff = date1.getTime() - date2.getTime();
+            diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            toggleViews();
+            listViewDay = diffDays;
+            drawListView(listViewDay);
+        });
     }
     
     /**
@@ -1258,8 +1290,6 @@ $(document).ready(function() {
             $("#views #eiwc").append("<div class='eventinweek' id='"+divs[i]+"'></div>");
         }
         $("#views #"+divs[6]).addClass("lastday");
-        //2015-01-01
-        $("#views .dates").css("background-color","#04756f");
         var head = [];
         head[0] = displayMonth((parseInt(divs[0].slice(5,7)))-1);
         head[1] = parseInt(divs[0].slice(8,10));
@@ -1269,6 +1299,8 @@ $(document).ready(function() {
         head[5] = divs[6].slice(0,4); 
         
         $("#views .head").html(head[0]+" "+head[1]+", "+head[2]+" - "+head[3]+" "+head[4]+", "+head[5]);
+        
+        drawDates();
     }
     
     /**
@@ -1277,15 +1309,42 @@ $(document).ready(function() {
     function drawDates(){
         if(viewstate==0){
             for(i=0;i<events.length;i++){
-                createEventInMonth(events[i].id,events[i].title,events[i].start,events[i].end,events[i].status);   
+                createEventInMonth(events[i].id,events[i].title,events[i].start,events[i].end);   
             }
+            $(".eventinmonth").on("click",function(){
+                rx = new RegExp("[0-9]+"); 
+                id = parseInt(rx.exec($(this).attr("class")));
+                drawDetailView(id);
+            });
         }else if(viewstate==1){
             for(i=0;i<events.length;i++){
-                createEventInWeek(events[i].id,events[i].title,events[i].start,events[i].end,events[i].status,events[i].allday,events[i].imageurl);   
+                createEventInWeek(events[i].id,events[i].title,events[i].start,events[i].end,events[i].allday,events[i].imageurl);   
             }
+            
+            $(".eventinweek").each(function (){
+                co = 0;
+                day = $(this).attr("id");
+                $("#"+day+">div").each(function (){
+                    co++;
+                    if(co>1){
+                        ec = $(this).attr("class");  
+                        console.log(ec);
+                        $("#views #"+day+"> div").css("width","45%"); 
+                        $("#views #"+day+"> div").css("float","left");
+                        $("#views #"+day+"> ."+ec).css("margin-left","55%"); 
+                    }
+                });
+            });
+            
+            $(".eventinweek > div").on("click",function(){
+                rx = new RegExp("[0-9]+"); 
+                id = parseInt(rx.exec($(this).attr("class")));
+                drawDetailView(id);
+            });
         }
         
     }
+    
     
     /**Creates Event in Weekview based on multiple Informations:
     * @param {Number}   id         ID
@@ -1300,48 +1359,52 @@ $(document).ready(function() {
     * @param {String}   imageurl   Background Image for Event Container
     * @param {Array(?)} categories Categories
     */
-    function createEventInWeek(id,title,start,end,status,allday,imageurl){
+    function createEventInWeek(id,title,start,end,allday,imageurl){
         var day=start.slice(0,10);
         var startpoint=parseInt(start.slice(-5,-3));
         startpoint += (parseInt(start.slice(-2)))/60;
         var duration = calculateDuration(start,end);
-        $("#views #"+day).append("<div id='event-"+id+"'></div>");
-        $("#views #event-"+id).append("<div class='eventtitle'>"+title+"</div>");
-        $("#views #event-"+id).append("<div class='eventinfo'></div>");
-        $("#views #event-"+id).css("position","absolute");
-        $("#views #event-"+id).css("z-index",id);
-        if(status=="Free"){
-            $("#views #event-"+id).css("background-color","rgba(255,255,255,0.3)");
-        }else if(status=="Tentative"){
-            $("#views #event-"+id).css("background-color","rgba(255,51,0,0.5)");
-        }else if(status=="Busy"){
-            $("#views #event-"+id).css("background-color","rgba(0,0,255,0.8)");
-        }
-        if(allday==0){
-            $("#views #event-"+id).css("margin-top",preciseStart(startpoint)+"px");
-            $("#views #event-"+id).css("height",preciseLength(id,startpoint,duration,day));
-        }else{
-            $("#views #event-"+id).css("margin-top",preciseStart(0));
-            $("#views #event-"+id).css("height",preciseLength(0,0,24,0)); 
-        }
-        if(imageurl!=""){
-            $("#views #event-"+id).css("background-image","url('"+imageurl+"')");
-            $("#views #event-"+id).css("background-size","100% auto");   
-            $("#views #event-"+id).css("background-repeat","no-repeat");
-        }
-        oss=0;
-        drawDates();
+        $("#views #"+day).append("<div class='event-"+id+"'></div>");
+        $("#views .event-"+id).append("<div class='eventtitle'>"+title+"</div>");
+        $("#views .event-"+id).css("position","absolute");
+        $("#views .event-"+id).css("z-index",id);
+        color = getEventTimeData(start);
+        $("#views .event-"+id).css("background-color",color[1]);
+        $("#views .event-"+id).css("margin-top",preciseStart(startpoint)+"px");
+        $("#views .event-"+id).css("height",preciseHeight(id,startpoint,duration,day,allday,color[1]));
     }
     
-    function createEventInMonth(id,title,start,end,status){
+    function createEventInMonth(id,title,start,end){
         var startday=start.slice(0,10);
         var endday=end.slice(0,10);
         var starttime = start.slice(11,16);
         var endtime = end.slice(11,16);
-        var line1 = title,line2 = starttime+" - "+endtime;
-        $("#views #"+startday).append("<div class='eventinmonth' id='event-"+id+"'><div>"+line1+"</div><div>"+line2+"</div></div>");
-        color = getEventTimeData(start);
-        $("#views #event-"+id).css("background-color",color[1]);
+        startd = new Date(start);
+        end = new Date(end);
+        d1 = startd.getTime();
+        d2 = end.getTime();
+        c=0;
+        while(d1<=d2){
+            d = startd.getDate();
+            startd.setDate(d+1);
+            d1 = startd.getTime();
+            if(c==0){
+                line1 = title,line2 = starttime+" - 23:59";
+            }else{
+                line1 = title,line2 = " All Day ";
+                startday = startday.slice(0,8) + ("0"+(parseInt(startday.slice(-2))+1)).slice(-2);
+            }
+            $("#views #"+startday).append("<div class='eventinmonth event-"+id+"'><div>"+line1+"</div><div>"+line2+"</div></div>");
+            color = getEventTimeData(start);
+            $("#views .event-"+id).css("background-color",color[1]);
+            c++;
+        }
+        if(c!=1){
+            line1 = title,line2 = "00:00 - " + endtime;
+        }else{
+            line1 = title,line2 = starttime + " - " + endtime;
+        }
+        $("#views #"+startday+" .event-"+id).html("<div>"+line1+"</div><div>"+line2+"</div>");
     }
     
     /**Calculates Pixelvalue for start point
@@ -1362,17 +1425,19 @@ $(document).ready(function() {
     * @param   {Number} day   Date of Event
     * @returns {Number}       Pixelvalue of Length of Event
     */
-    function preciseLength(id,start,dur,day){
-        var unit = 37;
+    function preciseHeight(id,start,dur,day,allday,color){
+        var unit = 35.4;
         var timepoint=start;
         var pix=0;
-        var step = 0.01
-        for(i=0;i<dur;i+=step){
+        var step = 0.0166;
+        for(pl=0;pl<dur;pl+=step){
             pix += unit*step;
         }
         var maxheight=$("#views #eiwc").height()-preciseStart(start);
         if(pix>maxheight){
-            drawOffset(id,pix-maxheight,day);
+            if(allday!=1){
+                drawOffset(id,(pix-maxheight),day,color);
+            }
             return (maxheight+50)+"px";
         }
         return pix+"px"; 
@@ -1384,12 +1449,12 @@ $(document).ready(function() {
     * @param {Number} pix  Calculated Length for Event
     * @param {Number} date Date of Event
     */
-    function drawOffset(id,pix,date){
+    function drawOffset(id,pix,date,color){
         var day = parseInt(date.slice(-2));
         var month = parseInt(date.slice(5,7));
         var year = parseInt(date.slice(0,4));
         day++;
-        if(day>new Date(Date.UTC(year,month,0)).getDate()){
+        if(day>new Date(year,month,0).getDate()){
             day=1;
             month++;
             if(month=13){
@@ -1400,24 +1465,18 @@ $(document).ready(function() {
         day = ("0"+day).slice(-2);
         month = ("0"+month).slice(-2);
         date=year+"-"+month+"-"+day;
-        color=$("#views #event-"+id).css("background-color");
-        width=$("#views #event-"+id).css("width");
         var maxheight = $("#views #eiwc").height();
         if(pix>maxheight){
-            $("#views #"+date).append("<div id='offset-"+day+"'></div>");
-            $("#views #offset-"+day).css("width",width);
+            $("#views #"+date).append("<div id='offset-"+day+"' class='event-"+id+"'></div>");
             $("#views #offset-"+day).css("height",(maxheight+50)+"px");
             $("#views #offset-"+day).css("background-color",color);
             $("#views #offset-"+day).css("border-top","none");  
-            //drawOffset(id,pix-maxheight,date);
+            drawOffset(id,(pix-maxheight),date,color);
         }else{
             $("#views #"+date).append("<div id='offset-"+day+"'></div>");
             $("#views #offset-"+day).css("height",pix+"px");
-            $("#views #offset-"+day).css("width",width);   
             $("#views #offset-"+day).css("background-color",color);
-            $("#views #offset-"+day).css("border-top","none");   
-            $("#views #event-"+id+" span").appendTo("#offset-"+day);
-            $("#views #event-"+id+" > .eventinfo").remove();
+            $("#views #offset-"+day).css("border-top","none");
         }
         oss=1;
     }

@@ -15,7 +15,7 @@ html, body {
     width:100%;
     overflow:hidden;
     z-index:10000;
-    transition:opacity 0.15s linear, margin-top 0.3s linear, height 0.3s linear;
+    transition:opacity 0.15s linear, margin-top 0.3s linear, height 0.3s linear, margin-left 0.3s linear, width 0.3s linear;
     display:none;
     opacity:0;
 }
@@ -23,7 +23,7 @@ html, body {
 #detailimg {
     height:auto;
     width:100%;
-    background-image:url(http://plantationparkcondos.com/wp-content/uploads/2014/05/meeting.jpg);/*http://www.discprofiles.com/blog/wp-content/uploads/2012/12/meeting-iStock.jpg);*/
+    background-image:url(../img/detail_standard.png);/*http://www.discprofiles.com/blog/wp-content/uploads/2012/12/meeting-iStock.jpg);*/
     background-size:cover;
     background-position:center;
     /*transition:-webkit-filter 0.5s ease, -moz-filter 0.5s ease, -o-filter 0.5s ease, -ms-filter 0.5s ease, filter 0.5s ease;

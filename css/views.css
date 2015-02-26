@@ -69,17 +69,18 @@
 
 #views .dates{
     width:98%;
-    background-color:#04756f;
+    background-color:#777777;
     margin:1%;
     margin-top:0%;
     margin-bottom:0%;
     color:#ffffff;
     text-align:center;
     font-size:0.3em;
+    cursor:pointer;
 }
 
 #views .omonth{
-    background-color:#909090;
+    background-color:#aaaaaa;
 }
 
 #views .events{
@@ -93,12 +94,21 @@
     overflow-y:scroll;
 }
 
+#views .pm ,#views .nm{
+    background-color:#e0e0e0;   
+}
+
 #views .eventinmonth{
     height:48%;
     text-align:center;
     vertical-align: middle;
     color:#ffffff;
     border-bottom: solid 1px black;
+    cursor:pointer;
+}
+
+#views .pm .eventinmonth , #views .nm .eventinmonth{
+    opacity:0.3;   
 }
 
 #views .time{
@@ -146,6 +156,7 @@
     border-radius:15px;
     width:90%;
     margin:0% 2.5%;
+    margin-top:1%;
 }
 
 #views .eventtitle{
