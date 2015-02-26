@@ -733,17 +733,28 @@ $(document).ready(function() {
                 $('#detail #time #text').html(tmpeventstartdate.getFullYear() + '/' + ('0' + (tmpeventstartdate.getUTCMonth()+1)).slice(-2) + '/' + ('0' + tmpeventstartdate.getUTCDate()).slice(-2) + ' | ' + element.start.slice(-5) + ' - ' + element.end.slice(-5));
                 $('#detail #location #text').html(element.location);
                 $('#detail #organizer #text').html(element.organizer + ' | ' + ((element.webpage=='') ? 'no website' : element.webpage));
-                $('#detailimg').css('background-image', 'url(' + ((element.imageurl=='') ? 'img/detail_standard.png' : element.imageurl) + ')');                
+                $('#detailimg').css('background-image', 'url(' + ((element.imageurl=='') ? 'img/detail_standard.png' : element.imageurl) + ')');
                 return false;
             }
         });
         /**ANI**/
+        if(viewstate==3) {
+            goheight = $('#calendar_wrapper #appointment_list #'+id).height();
+            gowidth = $(window).width();
+            gooffsettop = $('#calendar_wrapper #appointment_list #'+id).offset().top
+            gooffsetleft = 0;
+        } else if(viewstate==0) {
+            goheight = $('#views .event-'+id).height();
+            gowidth = $('#views .event-'+id).width();
+            gooffsettop = $('#views .event-'+id).offset().top;
+            gooffsetleft = $('#views .event-'+id).offset().left;
+        }
         $('#detail').css('display', 'block');
         $('#detail').css({'margin-top': '-' + $('#detail #info').outerHeight() + 'px'});
-        $('#detailimg').css({'height': $('#calendar_wrapper #appointment_list #'+id).height() + 'px', 'margin-top': $('#calendar_wrapper #appointment_list #'+id).offset().top + 'px', 'display': 'block'});
+        $('#detailimg').css({'height': goheight + 'px', 'width': gowidth + 'px', 'margin-left' : gooffsetleft + 'px', 'margin-top': gooffsettop + 'px', 'display': 'block'});
 
         setTimeout(function() {
-            $('#detailimg').css({'opacity': '1', 'margin-top': '0', 'height': '100%'});
+            $('#detailimg').css({'opacity': '1', 'margin-top': '0', 'margin-left': '0',  'height': '100%', 'width': '100%'});
             setTimeout(function() {
                 $('#detail').css({'opacity': '1', 'margin-top': '0px'});
             }, 300);
@@ -754,8 +765,19 @@ $(document).ready(function() {
         id = state.split('_')[1];
         state = 'calendar';
         $('#detail').css({'opacity': '0', 'margin-top': '-' + $('#detail #info').outerHeight() + 'px'});
+        if(viewstate==3) {
+            goheight = $('#calendar_wrapper #appointment_list #'+id).height();
+            gowidth = $(window).width();
+            gooffsettop = $('#calendar_wrapper #appointment_list #'+id).offset().top
+            gooffsetleft = 0;
+        } else if(viewstate==0) {
+            goheight = $('#views .event-'+id).height();
+            gowidth = $('#views .event-'+id).width();
+            gooffsettop = $('#views .event-'+id).offset().top;
+            gooffsetleft = $('#views .event-'+id).offset().left;
+        }
         setTimeout(function() {
-            $('#detailimg').css({'height': $('#calendar_wrapper #appointment_list #'+id).height() + 'px', 'margin-top': $('#calendar_wrapper #appointment_list #'+id).offset().top + 'px'});
+            $('#detailimg').css({'height': goheight + 'px', 'width': gowidth + 'px', 'margin-left': gooffsetleft + 'px', 'margin-top': gooffsettop + 'px'});
             setTimeout(function() {
                 $('#detailimg').css('opacity', '0');
                 setTimeout(function() {
