@@ -14,6 +14,10 @@ var fwr = 0;
 var oss = 0;
 var currentDatetime = new Date();
 var currentDaytime;
+var goheight;
+var gowidth;
+var gooffsettop;
+var gooffsetleft;
 if(currentDatetime.getHours()<6) {
     currentDaytime = 0;
 } else if(currentDatetime.getHours()<10) {
@@ -219,7 +223,7 @@ $(document).ready(function() {
                 /** TIMEZONE FIX **/
                 editstart = new Date((new Date(editstart + 'Z').getTime())+(1000*3600*currentTimezone*-1)).toISOString().substr(0,16);
                 editend = new Date((new Date(editend + 'Z').getTime())+(1000*3600*currentTimezone*-1)).toISOString().substr(0,16);
-                
+
                 $.post('http://host.bisswanger.com/dhbw/calendar.php', {
                     'user': user,
                     'action': 'update',
@@ -786,7 +790,9 @@ $(document).ready(function() {
         $('#calendar_wrapper #appointment_list div').css('display', 'none');
         today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()+dayaddition, currentTimezone, 0, 0, 0);
         isaa = today;
-        checkDateForDiff(isaa);
+        if(state.split('_')[0]!='detail') {
+            checkDateForDiff(isaa);
+        }
         thistime = new Date();
         if(dayaddition==0) {
             $('#calendar_wrapper #day #current').html('Today');
@@ -839,8 +845,16 @@ $(document).ready(function() {
         }
     }
 
+    var firsttimemonth = true;
     function drawMonthView() {
-        init(0, events, isaa);
+        if(firsttimemonth) {
+            init(0, events, isaa);
+            firsttimemonth = !firsttimemonth;
+        } else {
+            $("#views #time").remove();
+            $("#views #container > div").remove();
+            createMonthView(cm,cy);
+        }
     }
 
     function drawDetailView(id) {
@@ -921,7 +935,7 @@ $(document).ready(function() {
         id = state.split('_')[1];
         state = 'calendar';
         $('#detail').css({'opacity': '0', 'margin-top': '-' + $('#detail #info').outerHeight() + 'px'});
-        if(viewstate==3) {
+        /*if(viewstate==3) {
             goheight = $('#calendar_wrapper #appointment_list #'+id).height();
             gowidth = $(window).width();
             gooffsettop = $('#calendar_wrapper #appointment_list #'+id).offset().top
@@ -931,7 +945,7 @@ $(document).ready(function() {
             gowidth = $('#views .event-'+id).width();
             gooffsettop = $('#views .event-'+id).offset().top;
             gooffsetleft = $('#views .event-'+id).offset().left;
-        }
+        }*/
         setTimeout(function() {
             $('#detailimg').css({'height': goheight + 'px', 'width': gowidth + 'px', 'margin-left': gooffsetleft + 'px', 'margin-top': gooffsettop + 'px'});
             setTimeout(function() {
