@@ -814,20 +814,20 @@ $(document).ready(function() {
             }
             if(events[i]!=undefined) {
                 while(new Date(events[i].start).getTime()<today.getTime()+(24*3600*1000)) {
-                    eventdate = new Date(events[i].start);
-                    eventlengthtmp = new Date(new Date(events[i].end).getTime()-eventdate.getTime());
+                    eventdate = new Date(new Date(events[i].start + 'Z').getTime()-(3600*1000*currentTimezone));
+                    eventlengthtmp = new Date(new Date(events[i].end + 'Z').getTime()-eventdate.getTime());
                     eventlength = eventlengthtmp.getUTCHours() + ' hours ' + eventlengthtmp.getUTCMinutes() + ' minutes';
                     eventrange = '';
-                    if(eventdate.getUTCHours()<6) {
+                    if(eventdate.getHours()<6) {
                         eventrange = 'early';
                         nexteventrange = 'morning';
-                    } else if(eventdate.getUTCHours()<10) {
+                    } else if(eventdate.getHours()<10) {
                         eventrange = 'morning';
                         nexteventrange = 'afternoon';
-                    } else if(eventdate.getUTCHours()<17) {
+                    } else if(eventdate.getHours()<17) {
                         eventrange = 'afternoon';
                         nexteventrange = 'evening';
-                    } else if(eventdate.getUTCHours()<22) {
+                    } else if(eventdate.getHours()<22) {
                         eventrange = 'evening';
                         nexteventrange = 'night';
                     } else {
@@ -1342,7 +1342,6 @@ $(document).ready(function() {
                     co++;
                     if(co>1){
                         ec = $(this).attr("class");  
-                        console.log(ec);
                         $("#views #"+day+"> div").css("width","45%"); 
                         $("#views #"+day+"> div").css("float","left");
                         $("#views #"+day+"> ."+ec).css("margin-left","55%"); 
