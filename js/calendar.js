@@ -657,8 +657,13 @@ $(document).ready(function() {
                 }
                 
                 /** TIMEZONE FIX **/
-                aptstart = new Date((new Date(aptstart + 'Z').getTime())+(1000*3600*currentTimezone*-1)).toISOString().substr(0,16);
-                aptend = new Date((new Date(aptend + 'Z').getTime())+(1000*3600*currentTimezone*-1)).toISOString().substr(0,16);
+                try {
+                    aptstart = new Date((new Date(aptstart + 'Z').getTime())+(1000*3600*currentTimezone*-1)).toISOString().substr(0,16);
+                    aptend = new Date((new Date(aptend + 'Z').getTime())+(1000*3600*currentTimezone*-1)).toISOString().substr(0,16);
+                    timeerror = false;
+                } catch(e) {
+                    timeerror = true;
+                }
                 
                 $.post('http://host.bisswanger.com/dhbw/calendar.php', {
                     'user': user,
@@ -673,43 +678,51 @@ $(document).ready(function() {
                     'allday': aptalldaynum,
                     'webpage': $('#aptwebsite').val()
                 }, function(data, success) {
-                    if(document.getElementById('aptimage').files[0]!=undefined) {
-                        fd = new FormData();
-                        fd.append("user", user);
-                        fd.append("action", 'upload-image');
-                        fd.append("format", 'json');
-                        fd.append("id", data.add.id);
-                        fd.append("file", document.getElementById('aptimage').files[0]);
-                        $.ajax({
-                            url: 'http://host.bisswanger.com/dhbw/calendar.php',
-                            type: 'POST',
-                            processData: false,
-                            contentType: false,
-                            data: fd,
-                            success: function(imgData, imgSuccess) {
-                                afterCreation();
-                            }
-                        });
+                    if(data.error!=undefined || timeerror == true) {
+                        changeFullscreen('image', 'summary', 'Oh Snap!<br>#' + data.error.id + ': ' + data.error.text + '<br>Please contact <a href="http://twitter.com/4dialects">us</a> about this error so we can fix it!', '#8f0000');
                     } else {
-                        afterCreation();
-                    }
-                    function afterCreation() {
-                        state = 'newaptsummary';
-                        tmpname = ($('#aptname').val().length<23) ? $('#aptname').val() : $('#aptname').val().slice(0,20)+'...';
-                        $('#close_fullscreen').css('opacity', '0');
-                        changeFullscreen('image', 'sumloading', '<img src="img/loading.svg" style="height:100px; width:100px">', '#024d25');
-                        syncEvents(function(data, success) {
-                            if(aptallday) {
-                                changeFullscreen('sumloading', 'summary', 'Your appointment has been saved!<br>'+tmpname+'<br>All day on '+$('#aptyear').val()+'/'+$('#aptmonth').val()+'/'+$('#aptday').val()+'!', '#024d25');
-                            } else {
-                                changeFullscreen('sumloading', 'summary', 'Your appointment has been saved!<br>'+tmpname+'<br>On '+$('#aptyear').val()+'/'+$('#aptmonth').val()+'/'+$('#aptday').val()+' at '+$('#apthour').val()+':'+$('#aptminute').val()+'!', '#024d25');
-                            }
-                            setTimeout(function() {
-                                state = 'calendar';
-                                $('#close_fullscreen').css('opacity', '1');
-                                toggleCalendar();
-                            }, 4000);
-                        });
+                        if(document.getElementById('aptimage').files[0]!=undefined) {
+                            fd = new FormData();
+                            fd.append("user", user);
+                            fd.append("action", 'upload-image');
+                            fd.append("format", 'json');
+                            fd.append("id", data.add.id);
+                            fd.append("file", document.getElementById('aptimage').files[0]);
+                            $.ajax({
+                                url: 'http://host.bisswanger.com/dhbw/calendar.php',
+                                type: 'POST',
+                                processData: false,
+                                contentType: false,
+                                data: fd,
+                                success: function(imgData, imgSuccess) {
+                                    if(imgData.error!=undefined) {
+                                        changeFullscreen('image', 'summary', 'No picture for you today!<br>#' + imgData.error.id + ': ' + imgData.error.text + '<br>Please contact <a href="http://twitter.com/4dialects">us</a> about this error so we can fix it!', '#8f0000');
+                                    } else {
+                                        afterCreation();
+                                    }
+                                }
+                            });
+                        } else {
+                            afterCreation();
+                        }
+                        function afterCreation() {
+                            state = 'newaptsummary';
+                            tmpname = ($('#aptname').val().length<23) ? $('#aptname').val() : $('#aptname').val().slice(0,20)+'...';
+                            $('#close_fullscreen').css('opacity', '0');
+                            changeFullscreen('image', 'sumloading', '<img src="img/loading.svg" style="height:100px; width:100px">', '#024d25');
+                            syncEvents(function(data, success) {
+                                if(aptallday) {
+                                    changeFullscreen('sumloading', 'summary', 'Your appointment has been saved!<br>'+tmpname+'<br>All day on '+$('#aptyear').val()+'/'+$('#aptmonth').val()+'/'+$('#aptday').val()+'!', '#024d25');
+                                } else {
+                                    changeFullscreen('sumloading', 'summary', 'Your appointment has been saved!<br>'+tmpname+'<br>On '+$('#aptyear').val()+'/'+$('#aptmonth').val()+'/'+$('#aptday').val()+' at '+$('#apthour').val()+':'+$('#aptminute').val()+'!', '#024d25');
+                                }
+                                setTimeout(function() {
+                                    state = 'calendar';
+                                    $('#close_fullscreen').css('opacity', '1');
+                                    toggleCalendar();
+                                }, 4000);
+                            });
+                        }
                     }
                 });
             }
@@ -769,18 +782,22 @@ $(document).ready(function() {
                     'action': 'list',
                     'format': 'json',
                 }, function(data, success) {
-                    $.each(data.events.events, function(i, obj) {
-                        obj.start = new Date((new Date(obj.start + 'Z').getTime())+(1000*3600*currentTimezone)).toISOString().substr(0,16);
-                        obj.end = new Date((new Date(obj.end + 'Z').getTime())+(1000*3600*currentTimezone)).toISOString().substr(0,16);
-                        events.push(obj);
-                    });
-                    events.sort(function(a,b) {
-                        return (new Date(a.start).getTime() < new Date(b.start).getTime()) ? -1 : 1;
-                    });
-                    drawListView(listViewDay);
-                    drawMonthView(); //!IMPORTANT
-                    if(successFunc!=undefined) {
-                        successFunc(data, success);
+                    if(data.error!=undefined) {
+                        cAlert(data.error.text, 'There seems to be a problem with the database.<br>Please try again later.', 5000, 'error');
+                    } else {
+                        $.each(data.events.events, function(i, obj) {
+                            obj.start = new Date((new Date(obj.start + 'Z').getTime())+(1000*3600*currentTimezone)).toISOString().substr(0,16);
+                            obj.end = new Date((new Date(obj.end + 'Z').getTime())+(1000*3600*currentTimezone)).toISOString().substr(0,16);
+                            events.push(obj);
+                        });
+                        events.sort(function(a,b) {
+                            return (new Date(a.start).getTime() < new Date(b.start).getTime()) ? -1 : 1;
+                        });
+                        drawListView(listViewDay);
+                        drawMonthView(); //!IMPORTANT
+                        if(successFunc!=undefined) {
+                            successFunc(data, success);
+                        }
                     }
         });
     }
