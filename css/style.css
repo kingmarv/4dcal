@@ -475,11 +475,11 @@ div#welcome h1 {
     padding:0.1em 0.25em;
 }
 
-#alert #headline .success {
+#alert #headline.success {
     background-color:#024d25;
 }
 
-#alert #headline .error {
+#alert #headline.error {
     background-color:#8f0000;
 }
 

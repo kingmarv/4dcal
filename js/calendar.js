@@ -200,7 +200,36 @@ $(document).ready(function() {
                 
                 //Disable inputs
                 $('#detail #info input[type="text"]').attr('disabled', 'true');
-                $('#detail #info #status').off('click');
+                if(stattoggle!=false||stattoggle!=undefined) {
+                    $('#detail #info #status').click();
+                }
+                $('#detail #info #status img').off('click');
+                $('#detail #info #status img').css({'cursor': 'auto'});
+                
+                editstart = $('#detail #info #startdatey').val() + '-' + $('#detail #info #startdatem').val() + '-' + $('#detail #info #startdated').val() + 'T' + $('#detail #info #starttimeh').val() + ':' + $('#detail #info #starttimem').val();
+                editend = $('#detail #info #enddatey').val() + '-' + $('#detail #info #enddatem').val() + '-' + $('#detail #info #enddated').val() + 'T' + $('#detail #info #endtimeh').val() + ':' + $('#detail #info #endtimem').val();
+                
+                /** TIMEZONE FIX **/
+                editstart = new Date((new Date(editstart + 'Z').getTime())+(1000*3600*currentTimezone*-1)).toISOString().substr(0,16);
+                editend = new Date((new Date(editend + 'Z').getTime())+(1000*3600*currentTimezone*-1)).toISOString().substr(0,16);
+                
+                $.post('http://host.bisswanger.com/dhbw/calendar.php', {
+                    'user': user,
+                    'action': 'update',
+                    'format': 'json',
+                    'id': state.split('_')[1],
+                    'title': $('#detail #info #title').val(),
+                    'location': $('#detail #info #locin').val(),
+                    'organizer': $('#detail #info #orgin').val(),
+                    'start': editstart,
+                    'end': editend,
+                    'status': stattoggle.substr(0,1).toUpperCase()+stattoggle.substr(1),
+                    'allday': 0,
+                    'webpage': $('#detail #info #website').val()
+                }, function(data, success) {
+                    cAlert('Edit successful', $('#detail #info #title').val() + ' was edited.', 3500, 'success');
+                    syncEvents();
+                });
             } else {
                 cAlert('Edit enabled', 'Just click on the entries you want to edit.<br>Afterwards, click on the save icon.', 3500);
                 $(this).css({'transform': 'rotate(-360deg) scale(0)'});
@@ -210,8 +239,15 @@ $(document).ready(function() {
                 }, 250);
                 
                 //Enable inputs
+                $.each($('#detail #info #status img'), function(i, obj) {
+                    if($(obj).css('width')!='0px') {
+                        stattoggle = $(obj).attr('id');
+                    }
+                });
+                
                 $('#detail #info input[type="text"]').removeAttr('disabled');
-                $('#detail #info #status').click(toggleStatus);
+                $('#detail #info #status img').click(toggleStatus);
+                $('#detail #info #status img').css({'cursor': 'pointer'});
             }
             editchecked = !editchecked;
         });
@@ -268,13 +304,14 @@ $(document).ready(function() {
         
         var stattoggle = true;
         function toggleStatus(event) {
-            if(stattoggle) {
-                $(this).find('img').css({'width': '3%', 'background-color': 'rgba(0,0,0,0.3)', 'padding': '0 0.5%'});
+            if(stattoggle != true) {
+                $(this).parent().find('img').css({'width': '3%', 'background-color': 'rgba(0,0,0,0.3)', 'padding': '0 0.5%'});
+                stattoggle = true;
             } else {
-                $(this).find('img:not(#'+event.target.id+')').css({'width': '0'});
-                $(this).find('img').css({'background-color': 'transparent', 'padding': '0 0'});
+                $(this).parent().find('img:not(#'+event.target.id+')').css({'width': '0'});
+                $(this).parent().find('img').css({'background-color': 'transparent', 'padding': '0 0'});
+                stattoggle = event.target.id;
             }
-            stattoggle = !stattoggle;
         };
     });
 
