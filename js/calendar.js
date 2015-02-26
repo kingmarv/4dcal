@@ -1134,7 +1134,7 @@ $(document).ready(function() {
             for(i=0;i<events.length;i++){
                 createEventInMonth(events[i].id,events[i].title,events[i].start,events[i].end);   
             }
-            $(".eventinmonth > div").on("click",function(){
+            $(".eventinmonth").on("click",function(){
                 rx = new RegExp("[0-9]+"); 
                 id = parseInt(rx.exec($(this).attr("class")));
                 drawDetailView(id);
