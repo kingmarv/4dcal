@@ -150,12 +150,12 @@ $(document).ready(function() {
                 'format': 'json',
                 'id': $(this).parent().attr('id'),
             }, function(data, success) {
-                if(data.delete.status=='success') {
+                if(data.error!=undefined) {
+                    cAlert('Error', 'The element could not be deleted. The error is<br>#' + data.error.id + ': ' + data.error.text, 4000, 'error');
+                } else {
                     syncEvents(function(data, success) {
                         cAlert('Deleted', 'The element was successfully deleted.', 4000, 'success');
                     });
-                } else {
-                    cAlert('Error', 'The element could not be deleted. The error is', 4000, 'error');
                 }
             });
         });
@@ -238,7 +238,12 @@ $(document).ready(function() {
                     'allday': 0,
                     'webpage': $('#detail #info #website').val()
                 }, function(data, success) {
-                    cAlert('Edit successful', $('#detail #info #title').val() + ' was edited.', 3500, 'success');
+                    if(data.error!=undefined) {
+                        cAlert('No edit today<br>my app has broke away', 'Dang it!<br>#'+ data.error.id + ' with message<br>' + data.error.text + '<br>has occured.', 7500, 'error');
+                        drawDetailView(state.split('_')[1]);
+                    } else {
+                        cAlert('Edit successful', $('#detail #info #title').val() + ' was edited.', 3500, 'success');
+                    }
                     syncEvents();
                 });
             } else {
@@ -696,7 +701,8 @@ $(document).ready(function() {
                                 data: fd,
                                 success: function(imgData, imgSuccess) {
                                     if(imgData.error!=undefined) {
-                                        changeFullscreen('image', 'summary', 'No picture for you today!<br>#' + imgData.error.id + ': ' + imgData.error.text + '<br>Please contact <a href="http://twitter.com/4dialects">us</a> about this error so we can fix it!', '#8f0000');
+                                        changeFullscreen('image', 'summary', 'Your appoinment has been saved but:<br>No picture for you today!<br>#' + imgData.error.id + ': ' + imgData.error.text + '<br>Please contact <a href="http://twitter.com/4dialects">us</a> about this error so we can fix it!', '#ff8c00');
+                                        syncEvents();
                                     } else {
                                         afterCreation();
                                     }
