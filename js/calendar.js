@@ -851,7 +851,6 @@ $(document).ready(function() {
                         eventlength = 'Ends on ' + eventdend.getFullYear() + '/' + ('0' + eventdend.getMonth()+1).slice(-2) + '/' + ('0' + eventdend.getDate()).slice(-2);
                     }
                     eventrange = '';
-                    alert(events[i].start + '#' + events[i].end);
                     if(eventlength == 'All day') {
                         eventrange = 'allday';
                         nexteventrange = 'early';
