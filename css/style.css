@@ -328,6 +328,10 @@ html, body {
     color:white;
 }
 
+#calendar_wrapper #appointment_list #allday {
+    background-color:#010f47;
+}
+
 #calendar_wrapper #appointment_list #early {
     background-color:#010f47;
 }
