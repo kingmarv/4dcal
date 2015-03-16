@@ -599,49 +599,69 @@ $(document).ready(function() {
                     }
                 });
             } else if(state=='newapt1') {
-                state = 'newapt2';
-                changeFullscreen('name', 'place', 'Where do you go?*<br><input id="aptplace" type="text">', '#024d25');
-                $('#aptplace').focus();
+                if($('#aptname').val().length > 0){
+                    state = 'newapt2';
+                    changeFullscreen('name', 'place', 'Where do you go?*<br><input id="aptplace" type="text">', '#024d25');
+                    $('#aptplace').focus();
+                }else{
+                    cAlert('Error', 'It is necessary to enter a name!', 2000, 'error');
+                }
             } else if(state=='newapt2') {
-                state = 'newapt3';
-                changeFullscreen('place', 'corganizer', 'Who planned this?*<br><input id="aptorganizer" type="text" placeholder="Mail Address">', '#024d25');
-                $('#aptorganizer').focus();
+                if($('#aptplace').val().length > 0){
+                    state = 'newapt3';
+                    changeFullscreen('place', 'corganizer', 'Who planned this?*<br><input id="aptorganizer" type="text" placeholder="Mail Address">', '#024d25');
+                    $('#aptorganizer').focus();
+                }else{
+                    cAlert('Error', 'It is necessary to enter a place!', 2000, 'error');
+                }
             } else if(state=='newapt3') {
-                state = 'newapt4';
-                changeFullscreen('corganizer', 'start', 'When do you go?*<br><input id="aptyear" type="text" maxlength="4" placeholder="YYYY" style="width:15%"><input id="aptmonth" type="text" maxlength="2" placeholder="MM" style="width:7.5%; margin:0 0.5%"><input id="aptday" type="text" maxlength="2" placeholder="DD" style="width:7.5%"><br><input id="apthour" type="text" maxlength="2" placeholder="HH" style="width:7.5%">:<input id="aptminute" type="text" maxlength="2" placeholder="MM" style="width:7.5%">', '#024d25');
-                $('#aptyear').focus();
+                if($('#aptplace').val().length > 0 && $('#aptorganizer').val().indexOf('@') != -1 && $('#aptorganizer').val().indexOf('.') != -1){
+                    state = 'newapt4';
+                    changeFullscreen('corganizer', 'start', 'When do you go?*<br><input id="aptyear" type="text" maxlength="4" placeholder="YYYY" style="width:15%"><input id="aptmonth" type="text" maxlength="2" placeholder="MM" style="width:7.5%; margin:0 0.5%"><input id="aptday" type="text" maxlength="2" placeholder="DD" style="width:7.5%"><br><input id="apthour" type="text" maxlength="2" placeholder="HH" style="width:7.5%">:<input id="aptminute" type="text" maxlength="2" placeholder="MM" style="width:7.5%">', '#024d25');
+                    $('#aptyear').focus();
+                }else{
+                    cAlert('Error', 'It is necessary to enter an E-Mail-Address!', 2000, 'error');
+                }
             } else if(state=='newapt4') {
-                state = 'newapt5';
-                changeFullscreen('start', 'end', 'How long is this event?*<br><input id="aptlhour" type="text" style="margin-bottom:2%; width:10%">h<input id="aptlminutes" type="text" maxlength="2" style="margin-bottom:2%; width:10%">min '+currTimezString+'<br><a href="javascript:void(0)" id="aptallday">All Day</a>', '#024d25');
-                aptallday = false;
-                $('#aptallday').click(function() {
-                    aptallday = true;
-                    var tmpe = jQuery.Event("keypress");
-                    tmpe.which = 13;
-                    $(document).trigger(tmpe);
-                });
-                $('#aptlhour').focus();
+                if($('#aptyear').val().length + $('#aptmonth').val().length + $('#aptday').val().length + $('#apthour').val().length + $('#aptminute').val().length == 12){
+                    state = 'newapt5';
+                    changeFullscreen('start', 'end', 'How long is this event?*<br><input id="aptlhour" type="text" style="margin-bottom:2%; width:10%">h<input id="aptlminutes" type="text" maxlength="2" style="margin-bottom:2%; width:10%">min '+currTimezString+'<br><a href="javascript:void(0)" id="aptallday">All Day</a>', '#024d25');
+                    aptallday = false;
+                    $('#aptallday').click(function() {
+                        aptallday = true;
+                        var tmpe = jQuery.Event("keypress");
+                        tmpe.which = 13;
+                        $(document).trigger(tmpe);
+                    });
+                    $('#aptlhour').focus();
+                }else{
+                    cAlert('Error', 'It is necessary to enter a full Date!', 2000, 'error'); 
+                }
             } else if(state=='newapt5') {
-                state = 'newapt6';
-                changeFullscreen('end', 'status', 'Are you available whilst this?*<br><a href="javascript:void(0)" id="aptfree">Free</a><a href="javascript:void(0)" id="aptbusy">Busy</a><a href="javascript:void(0)" id="apttent">Tentative</a>', '#024d25');
-                $('#aptfree').click(function() {
-                    aptstatus = 'Free';
-                    state = 'newapt7';
-                    changeFullscreen('status', 'webpage', 'Is there a website?<br><input id="aptwebsite" type="text"><br><span style="font-size:0.5em">Enter to skip</span>', '#024d25');
-                    $('#aptwebsite').focus();
-                });
-                $('#aptbusy').click(function() {
-                    aptstatus = 'Busy';
-                    state = 'newapt7';
-                    changeFullscreen('status', 'webpage', 'Is there a website?<br><input id="aptwebsite" type="text"><br><span style="font-size:0.5em">Enter to skip</span>', '#024d25');
-                    $('#aptwebsite').focus();
-                });
-                $('#apttent').click(function() {
-                    aptstatus = 'Tentative';
-                    state = 'newapt7';
-                    changeFullscreen('status', 'webpage', 'Is there a website?<br><input id="aptwebsite" type="text"><br><span style="font-size:0.5em">Enter to skip</span>', '#024d25');
-                    $('#aptwebsite').focus();
-                });
+                if($('#aptlhour').val().length != 0 && $('#aptlminutes').val().length != 0){
+                    state = 'newapt6';
+                    changeFullscreen('end', 'status', 'Are you available whilst this?*<br><a href="javascript:void(0)" id="aptfree">Free</a><a href="javascript:void(0)" id="aptbusy">Busy</a><a href="javascript:void(0)" id="apttent">Tentative</a>', '#024d25');
+                    $('#aptfree').click(function() {
+                        aptstatus = 'Free';
+                        state = 'newapt7';
+                        changeFullscreen('status', 'webpage', 'Is there a website?<br><input id="aptwebsite" type="text"><br><span style="font-size:0.5em">Enter to skip</span>', '#024d25');
+                        $('#aptwebsite').focus();
+                    });
+                    $('#aptbusy').click(function() {
+                        aptstatus = 'Busy';
+                        state = 'newapt7';
+                        changeFullscreen('status', 'webpage', 'Is there a website?<br><input id="aptwebsite" type="text"><br><span style="font-size:0.5em">Enter to skip</span>', '#024d25');
+                        $('#aptwebsite').focus();
+                    });
+                    $('#apttent').click(function() {
+                        aptstatus = 'Tentative';
+                        state = 'newapt7';
+                        changeFullscreen('status', 'webpage', 'Is there a website?<br><input id="aptwebsite" type="text"><br><span style="font-size:0.5em">Enter to skip</span>', '#024d25');
+                        $('#aptwebsite').focus();
+                    });
+                }else{
+                     cAlert('Error', 'It is necessary to enter a Duration!', 2000, 'error');  
+                }
             } else if(state=='newapt7') {
                 state = 'newapt8';
                 changeFullscreen('webpage', 'image', 'Do you want to attach an image?<br><a href="javascript:void(0)" id="aptimgsel">Choose Image</a><input id="aptimage" type="file" accept="image/jpeg, image/png" style="display:none;"><br><span style="font-size:0.5em">Enter to skip or continue</span>', '#024d25');
@@ -744,6 +764,11 @@ $(document).ready(function() {
             if(val.match(notnum) != null){
                 $('#'+fe).val(val.slice(0,$('#'+fe).val().length -1));
             }
+            if($('#aptmonth').val() > 12){$('#aptmonth').val('')};
+            if($('#aptday').val() > 31){$('#aptday').val('')};
+            if($('#apthour').val() > 23){$('#apthour').val('')};
+            if($('#aptminute').val() > 59){$('#aptminute').val('')};
+            
             if(e.which != 8){
                if($('#'+fe).val().length >= 2){
                     switch(fe){
@@ -767,6 +792,7 @@ $(document).ready(function() {
                 if(val.match(notnum) != null){
                     $('#'+fe).val(val.slice(0,$('#'+fe).val().length -1));
                 }
+                if($('#aptlminutes').val() > 59){$('#aptlminutes').val('')};
                 if($('#'+fe).val().length == 0){
                     switch(fe){
                         case 'aptminute':  
@@ -786,6 +812,9 @@ $(document).ready(function() {
             }
         }
         if(state=='newapt5'){
+            if(val.match(notnum) != null){
+                    $('#'+fe).val(val.slice(0,$('#'+fe).val().length -1));
+                }
             if(e.which != 8){
                if($('#'+fe).val().length == 2 && fe == 'aptlhour'){
                     $('#aptlminutes').focus();
