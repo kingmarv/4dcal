@@ -633,13 +633,13 @@ $(document).ready(function() {
                 $('#aptbusy').click(function() {
                     aptstatus = 'Busy';
                     state = 'newapt7';
-                    changeFullscreen('availability', 'webpage', 'Is there a website?<br><input id="aptwebsite" type="text"><br><span style="font-size:0.5em">Enter to skip</span>', '#024d25');
+                    changeFullscreen('status', 'webpage', 'Is there a website?<br><input id="aptwebsite" type="text"><br><span style="font-size:0.5em">Enter to skip</span>', '#024d25');
                     $('#aptwebsite').focus();
                 });
                 $('#apttent').click(function() {
                     aptstatus = 'Tentative';
                     state = 'newapt7';
-                    changeFullscreen('availability', 'webpage', 'Is there a website?<br><input id="aptwebsite" type="text"><br><span style="font-size:0.5em">Enter to skip</span>', '#024d25');
+                    changeFullscreen('status', 'webpage', 'Is there a website?<br><input id="aptwebsite" type="text"><br><span style="font-size:0.5em">Enter to skip</span>', '#024d25');
                     $('#aptwebsite').focus();
                 });
             } else if(state=='newapt7') {
@@ -680,7 +680,7 @@ $(document).ready(function() {
                     'start': aptstart,
                     'end': aptend,
                     'status': aptstatus,
-                    'allday': aptalldaynum,
+                    'allday': 0,//aptalldaynum,
                     'webpage': $('#aptwebsite').val()
                 }, function(data, success) {
                     if(data.error!=undefined || timeerror == true) {
@@ -838,10 +838,24 @@ $(document).ready(function() {
             if(events[i]!=undefined) {
                 while(new Date(events[i].start).getTime()<today.getTime()+(24*3600*1000)) {
                     eventdate = new Date(new Date(events[i].start + 'Z').getTime()-(3600*1000*currentTimezone));
-                    eventlengthtmp = new Date(new Date(events[i].end + 'Z').getTime()-eventdate.getTime());
-                    eventlength = eventlengthtmp.getUTCHours() + ' hours ' + eventlengthtmp.getUTCMinutes() + ' minutes';
+                    eventdend = new Date(new Date(events[i].end + 'Z').getTime()-(3600*1000*currentTimezone));
+                    if(eventdate.getDate() == eventdend.getDate()) {
+                        eventlength = ((eventdate.getMinutes()<=eventdend.getMinutes()) ? (eventdend.getHours() - eventdate.getHours()) : (eventdend.getHours() - eventdate.getHours() - 1))
+                            + ' hours '
+                            + ((eventdate.getMinutes()<=eventdend.getMinutes()) ? (eventdend.getMinutes() - eventdate.getMinutes()) : (eventdend.getMinutes() - eventdate.getMinutes() + 60))
+                            + ' minutes';
+                        if(eventlength == '23 hours 59 minutes') {
+                            eventlength = 'All day';
+                        }
+                    } else {
+                        eventlength = 'Ends on ' + eventdend.getFullYear() + '/' + ('0' + eventdend.getMonth()+1).slice(-2) + '/' + ('0' + eventdend.getDate()).slice(-2);
+                    }
                     eventrange = '';
-                    if(eventdate.getHours()<6) {
+                    alert(events[i].start + '#' + events[i].end);
+                    if(eventlength == 'All day') {
+                        eventrange = 'allday';
+                        nexteventrange = 'early';
+                    } else if(eventdate.getHours()<6) {
                         eventrange = 'early';
                         nexteventrange = 'morning';
                     } else if(eventdate.getHours()<10) {
@@ -858,7 +872,11 @@ $(document).ready(function() {
                         nexteventrange = 'endday';
                     }
                     $('#calendar_wrapper #appointment_list #'+eventrange).css('display', 'block');
-                    $('#appointment_list #'+nexteventrange).before('<div id="'+events[i].id+'"class="aptlst"><div id="time">'+events[i].start.slice(-5)+' - '+eventlength+'</div>'+events[i].title+'<div id="delete"><img src="img/trash.svg"></div></div>');
+                    if(eventlength!="All day") {
+                        $('#appointment_list #'+nexteventrange).before('<div id="'+events[i].id+'"class="aptlst"><div id="time">'+events[i].start.slice(-5)+' - '+eventlength+'</div>'+events[i].title+'<div id="delete"><img src="img/trash.svg"></div></div>');
+                    } else {
+                        $('#appointment_list #'+nexteventrange).before('<div id="'+events[i].id+'"class="aptlst"><div style="height:0.35em"></div>'+events[i].title+'<div style="height:0.3em"></div><div id="delete"><img src="img/trash.svg"></div></div>');
+                    }
                     i++;
                     if(events[i]==undefined) {
                         break;
@@ -1438,7 +1456,11 @@ $(document).ready(function() {
         if(c!=1){
             line1 = title,line2 = "00:00 - " + endtime;
         }else{
-            line1 = title,line2 = starttime + " - " + endtime;
+            if(starttime!="00:00" || endtime!="23:59") {
+                line1 = title,line2 = starttime + " - " + endtime;
+            } else {
+                line1 = title,line2 = " All Day ";
+            }
         }
         $("#views #"+startday+" .event-"+id).html("<div>"+line1+"</div><div>"+line2+"</div>");
     }
