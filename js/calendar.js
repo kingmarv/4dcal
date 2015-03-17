@@ -273,48 +273,74 @@ $(document).ready(function() {
         });
         
         $('#detail #info #title').focusout(function() {
-            $('#detail #info #measure').css({'font-size': '1em', 'font-family': '"Slabo 27px", "Arial"'});
-            $('#detail #info #measure').html($('#detail #title').val());
-            $(this).css({'width': $('#detail #info #measure').width(), 'background-color': 'transparent'});
+            if($('#detail #info #title').val().length > 0){
+                $('#detail #info #measure').css({'font-size': '1em', 'font-family': '"Slabo 27px", "Arial"'});
+                $('#detail #info #measure').html($('#detail #title').val());
+                $(this).css({'width': $('#detail #info #measure').width(), 'background-color': 'transparent'});
+            }else{
+                cAlert('Warning', 'It is necessary to enter a title', 2000, 'warning');
+                $('#detail #info #title').focus();
+            }
         });
+        
+        var fe;
         
         $.each($('#detail #info #time input[type="text"]'), function(i, obj) {
             $(obj).focusin(function() {
                 $(this).css({'width': '7.5%', 'background-color': 'rgba(0,0,0,0.3)'});
+                fe = $(this).attr('id');
             });
             
             $(obj).focusout(function() {
-                $('#detail #info #measure').css({'font-size': '0.5em', 'font-family': '"PT Sans", "Arial"'});
-                $('#detail #info #measure').html($(this).val());
-                $(this).css({'width': $('#detail #info #measure').width(), 'background-color': 'transparent'});
+                if($('#'+fe).val().length > 0){
+                    $('#detail #info #measure').css({'font-size': '0.5em', 'font-family': '"PT Sans", "Arial"'});
+                    $('#detail #info #measure').html($(this).val());
+                    $(this).css({'width': $('#detail #info #measure').width(), 'background-color': 'transparent'});
+                }else{
+                    cAlert('Warning', 'It is necessary to enter every date field', 2000, 'warning');
+                    $('#'+fe).focus();
+                }
             });
         });
         
         $.each($('#detail #info #location input[type="text"]'), function(i, obj) {
             $(obj).focusin(function() {
                 $(obj).css({'width': '90%', 'background-color': 'rgba(0,0,0,0.3)'});
+                fe = $(this).attr('id');
             });
             
             $(obj).focusout(function() {
-                $('#detail #info #measure').css({'font-size': '0.5em', 'font-family': '"PT Sans", "Arial"'});
-                $('#detail #info #measure').html($(obj).val());
-                $(obj).css({'width': $('#detail #info #measure').width(), 'background-color': 'transparent'});
+                if($('#'+fe).val().length > 0){
+                    $('#detail #info #measure').css({'font-size': '0.5em', 'font-family': '"PT Sans", "Arial"'});
+                    $('#detail #info #measure').html($(obj).val());
+                    $(obj).css({'width': $('#detail #info #measure').width(), 'background-color': 'transparent'});
+                }else{
+                    cAlert('Warning', 'It is necessary to enter a location', 2000, 'warning');
+                    $('#'+fe).focus();
+                }
             });
         });
         
         $.each($('#detail #info #organizer input[type="text"]'), function(i, obj) {
             $(obj).focusin(function() {
                 $(obj).css({'width': '45%', 'background-color': 'rgba(0,0,0,0.3)'});
+                fe = $(this).attr('id');
+                console.log(fe);
             });
             
             $(obj).focusout(function() {
-                $('#detail #info #measure').css({'font-size': '0.5em', 'font-family': '"PT Sans", "Arial"'});
-                if($(obj).val()!='') {
-                    $('#detail #info #measure').html($(obj).val());
-                } else {
-                    $('#detail #info #measure').html('no website');
+                 if($('#'+fe).val().length > 0 || fe == 'website'){   
+                    $('#detail #info #measure').css({'font-size': '0.5em', 'font-family': '"PT Sans", "Arial"'});
+                    if($(obj).val()!='') {
+                        $('#detail #info #measure').html($(obj).val());
+                    } else {
+                        $('#detail #info #measure').html('no website');
+                    }
+                    $(obj).css({'width': $('#detail #info #measure').width(), 'background-color': 'transparent'});
+                }else{
+                    cAlert('Warning', 'It is necessary to enter an organizer', 2000, 'warning');
+                    $('#'+fe).focus();
                 }
-                $(obj).css({'width': $('#detail #info #measure').width(), 'background-color': 'transparent'});
             });
         });
         
@@ -503,108 +529,118 @@ $(document).ready(function() {
     $(document).keypress(function(e) {
         if(e.which == 13) {
             if(state=='user') {
+                userset = false;
                 if($.cookie('user')==undefined) {
-                    changeFullscreen('user', 'userloading', '<img src="img/loading.svg" style="height:100px; width:100px">','#04959f');
-                    user = $('#user #username').val();
-                } else {
+                    if($('#username').val().length > 0){
+                        changeFullscreen('user', 'userloading', '<img src="img/loading.svg" style="height:100px; width:100px">','#04959f');
+                        user = $('#user #username').val();
+                        userset = true;
+                    }else{
+                        cAlert('Warning', 'It is necessary to enter a name!', 2000, 'warning');
+                    }
+                } else{
                     changeFullscreen('welcome', 'userloading', '<img src="img/loading.svg" style="height:100px; width:100px">','#04959f');
                     user = $.cookie('user');
+                    userset = true;
                 }
-                state = "calendarlist"
-                var titles = [];
-                var times = [];
-                var eventData = []
-                syncEvents(function(data, success) {
-                    i = 0;
-                    tmpdate = new Date().getTime();
-                    if(events[i]!=undefined) {
-                        while(new Date(events[i].start).getTime()<tmpdate) {
-                            i++;
-                            if(events[i]==undefined) {
-                                break;
-                            }
-                        }
-                    }
-                    for(j = 0; j<3; j++) {
+                
+                if(userset){
+                    state = "calendarlist"
+                    var titles = [];
+                    var times = [];
+                    var eventData = []
+                    syncEvents(function(data, success) {
+                        i = 0;
+                        tmpdate = new Date().getTime();
                         if(events[i]!=undefined) {
-                            titles[j] = events[i].title;
-                            times[j] = events[i].start.split('T')[1];                        
-                            eventData[j] = getEventTimeData(events[i].start);
-                        } else {
-                            if(j==0) {
-                                titles[0] = 'This is where your day is shown and you have a quick look';
-                                times[0] = 'it';
-                                eventData[0] = ['', '#024d25'];
-                                titles[1] = 'The colors indicate the daytime. This would be';
-                                times[1] = 'night';
-                                eventData[1] = ['', '#010f47'];
-                                titles[2] = 'and enjoy making appointments';
-                                times[2] = 'this place';
-                                eventData[2] = ['So welcome -', '#d90000'];
-                                break;
-                            } else if(j==1) {
-                                titles[j] = 'You\'re free';
-                                times[j] = 'this time';
-                                eventData[j] = ['Enjoy!', '#024d25'];
-                            } else if(j==2) {
-                                titles[j] = 'Nothing more';
-                                times[j] = 'the moment';
-                                eventData[j] = ['Free Time!', '#024d25'];
+                            while(new Date(events[i].start).getTime()<tmpdate) {
+                                i++;
+                                if(events[i]==undefined) {
+                                    break;
+                                }
                             }
                         }
-                        i++;
-                    }
-                    if(currentDaytime==0) {
-                        greeting = "Have a good night,";
-                    } else if(currentDaytime==1) {
-                        greeting = "Good morning,";
-                    } else if(currentDaytime==2) {
-                        greeting = "Hello";
-                    } else {
-                        greeting = "Good evening,";
-                    }
-                    changeFullscreen('userloading', 'hello', greeting+' '+user+'!', '#04959f');
-                    if($.cookie('overview')=='true') {
-                        setTimeout(function() {
-                            fromFullscreenToTop('hello', 25, 75, '#04756f', eventData[0][1]);
+                        for(j = 0; j<3; j++) {
+                            if(events[i]!=undefined) {
+                                titles[j] = events[i].title;
+                                times[j] = events[i].start.split('T')[1];                        
+                                eventData[j] = getEventTimeData(events[i].start);
+                            } else {
+                                if(j==0) {
+                                    titles[0] = 'This is where your day is shown and you have a quick look';
+                                    times[0] = 'it';
+                                    eventData[0] = ['', '#024d25'];
+                                    titles[1] = 'The colors indicate the daytime. This would be';
+                                    times[1] = 'night';
+                                    eventData[1] = ['', '#010f47'];
+                                    titles[2] = 'and enjoy making appointments';
+                                    times[2] = 'this place';
+                                    eventData[2] = ['So welcome -', '#d90000'];
+                                    break;
+                                } else if(j==1) {
+                                    titles[j] = 'You\'re free';
+                                    times[j] = 'this time';
+                                    eventData[j] = ['Enjoy!', '#024d25'];
+                                } else if(j==2) {
+                                    titles[j] = 'Nothing more';
+                                    times[j] = 'the moment';
+                                    eventData[j] = ['Free Time!', '#024d25'];
+                                }
+                            }
+                            i++;
+                        }
+                        if(currentDaytime==0) {
+                            greeting = "Have a good night,";
+                        } else if(currentDaytime==1) {
+                            greeting = "Good morning,";
+                        } else if(currentDaytime==2) {
+                            greeting = "Hello";
+                        } else {
+                            greeting = "Good evening,";
+                        }
+                        changeFullscreen('userloading', 'hello', greeting+' '+user+'!', '#04959f');
+                        if($.cookie('overview')=='true') {
                             setTimeout(function() {
-                                changeFullscreen('hello', 'nextaptmnt', eventData[0][0]+' '+titles[0]+' at '+times[0]+'.', eventData[0][1]);
-                            }, 1100);
-                            setTimeout(function() {
-                                fromFullscreenToTop('nextaptmnt', 25, 50, eventData[0][1], eventData[1][1]);
+                                fromFullscreenToTop('hello', 25, 75, '#04756f', eventData[0][1]);
                                 setTimeout(function() {
-                                    changeFullscreen('nextaptmnt', '2ndaptmnt', eventData[1][0]+' '+titles[1]+' at '+times[1]+'.', eventData[1][1]);
-                                    setTimeout(function() {
-                                        fromFullscreenToTop('2ndaptmnt', 25, 25, eventData[1][1], eventData[2][1])
-                                        setTimeout(function() {
-                                            changeFullscreen('2ndaptmnt', '3rdaptmnt', eventData[2][0]+' '+titles[2]+' at '+times[2]+'.', eventData[2][1]);
-                                            setTimeout(function() {
-                                                toggleCalendar();
-                                                setTimeout(function() {
-                                                    $('#close_fullscreen').css('display', 'block');
-                                                }, 1000);
-                                            }, 2400);
-                                        }, 1100);
-                                    }, 2400);
+                                    changeFullscreen('hello', 'nextaptmnt', eventData[0][0]+' '+titles[0]+' at '+times[0]+'.', eventData[0][1]);
                                 }, 1100);
-                            }, 3500);
-                        }, 2000);
-                    } else {
-                        setTimeout(function() {
-                            toggleCalendar();
+                                setTimeout(function() {
+                                    fromFullscreenToTop('nextaptmnt', 25, 50, eventData[0][1], eventData[1][1]);
+                                    setTimeout(function() {
+                                        changeFullscreen('nextaptmnt', '2ndaptmnt', eventData[1][0]+' '+titles[1]+' at '+times[1]+'.', eventData[1][1]);
+                                        setTimeout(function() {
+                                            fromFullscreenToTop('2ndaptmnt', 25, 25, eventData[1][1], eventData[2][1])
+                                            setTimeout(function() {
+                                                changeFullscreen('2ndaptmnt', '3rdaptmnt', eventData[2][0]+' '+titles[2]+' at '+times[2]+'.', eventData[2][1]);
+                                                setTimeout(function() {
+                                                    toggleCalendar();
+                                                    setTimeout(function() {
+                                                        $('#close_fullscreen').css('display', 'block');
+                                                    }, 1000);
+                                                }, 2400);
+                                            }, 1100);
+                                        }, 2400);
+                                    }, 1100);
+                                }, 3500);
+                            }, 2000);
+                        } else {
                             setTimeout(function() {
-                                $('#close_fullscreen').css('display', 'block');
-                            }, 1000);
-                        }, 2000);
-                    }
-                });
+                                toggleCalendar();
+                                setTimeout(function() {
+                                    $('#close_fullscreen').css('display', 'block');
+                                }, 1000);
+                            }, 2000);
+                        }
+                    });
+                }
             } else if(state=='newapt1') {
                 if($('#aptname').val().length > 0){
                     state = 'newapt2';
                     changeFullscreen('name', 'place', 'Where do you go?*<br><input id="aptplace" type="text">', '#024d25');
                     $('#aptplace').focus();
                 }else{
-                    cAlert('Error', 'It is necessary to enter a name!', 2000, 'error');
+                    cAlert('Warning', 'It is necessary to enter a name!', 2000, 'warning');
                 }
             } else if(state=='newapt2') {
                 if($('#aptplace').val().length > 0){
@@ -612,7 +648,7 @@ $(document).ready(function() {
                     changeFullscreen('place', 'corganizer', 'Who planned this?*<br><input id="aptorganizer" type="text" placeholder="Mail Address">', '#024d25');
                     $('#aptorganizer').focus();
                 }else{
-                    cAlert('Error', 'It is necessary to enter a place!', 2000, 'error');
+                    cAlert('Warning', 'It is necessary to enter a place!', 2000, 'warning');
                 }
             } else if(state=='newapt3') {
                 if($('#aptplace').val().length > 0 && $('#aptorganizer').val().indexOf('@') != -1 && $('#aptorganizer').val().indexOf('.') != -1){
@@ -620,7 +656,7 @@ $(document).ready(function() {
                     changeFullscreen('corganizer', 'start', 'When do you go?*<br><input id="aptyear" type="text" maxlength="4" placeholder="YYYY" style="width:15%"><input id="aptmonth" type="text" maxlength="2" placeholder="MM" style="width:7.5%; margin:0 0.5%"><input id="aptday" type="text" maxlength="2" placeholder="DD" style="width:7.5%"><br><input id="apthour" type="text" maxlength="2" placeholder="HH" style="width:7.5%">:<input id="aptminute" type="text" maxlength="2" placeholder="MM" style="width:7.5%">', '#024d25');
                     $('#aptyear').focus();
                 }else{
-                    cAlert('Error', 'It is necessary to enter an E-Mail-Address!', 2000, 'error');
+                    cAlert('Warning', 'It is necessary to enter an E-Mail-Address!', 2000, 'warning');
                 }
             } else if(state=='newapt4') {
                 if($('#aptyear').val().length + $('#aptmonth').val().length + $('#aptday').val().length + $('#apthour').val().length + $('#aptminute').val().length == 12){
@@ -635,7 +671,7 @@ $(document).ready(function() {
                     });
                     $('#aptlhour').focus();
                 }else{
-                    cAlert('Error', 'It is necessary to enter a full Date!', 2000, 'error'); 
+                    cAlert('Warning', 'It is necessary to enter a full Date!', 2000, 'warning'); 
                 }
             } else if(state=='newapt5') {
                 if($('#aptlhour').val().length != 0 && $('#aptlminutes').val().length != 0){
@@ -660,7 +696,7 @@ $(document).ready(function() {
                         $('#aptwebsite').focus();
                     });
                 }else{
-                     cAlert('Error', 'It is necessary to enter a Duration!', 2000, 'error');  
+                     cAlert('Warning', 'It is necessary to enter a Duration!', 2000, 'warning');  
                 }
             } else if(state=='newapt7') {
                 state = 'newapt8';
