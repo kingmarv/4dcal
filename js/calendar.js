@@ -639,7 +639,7 @@ $(document).ready(function() {
                 $('#aptyear').focus();
             } else if(state=='newapt4') {
                 state = 'newapt5';
-                changeFullscreen('start', 'end', 'How long is this event?*<br><input id="aptlhour" type="text" style="margin-bottom:2%; width:10%">h<input id="aptlminutes" type="text" style="margin-bottom:2%; width:10%">min '+currTimezString+'<br><a href="javascript:void(0)" id="aptallday">All Day</a>', '#024d25');
+                changeFullscreen('start', 'end', 'How long is this event?*<br><input id="aptlhour" type="text" style="margin-bottom:2%; width:10%">h<input id="aptlminutes" type="text" maxlength="2" style="margin-bottom:2%; width:10%">min '+currTimezString+'<br><a href="javascript:void(0)" id="aptallday">All Day</a>', '#024d25');
                 aptallday = false;
                 $('#aptallday').click(function() {
                     aptallday = true;
@@ -763,7 +763,70 @@ $(document).ready(function() {
             }
         }
     });
-
+    
+    $(document).keyup(function (e) {
+        notnum = new RegExp('[^0-9]');
+        fe  = $('*:focus').attr('id');
+        val = $('#'+fe).val();
+        
+        if(state=='newapt4'){
+            if(val.match(notnum) != null){
+                $('#'+fe).val(val.slice(0,$('#'+fe).val().length -1));
+            }
+            if(e.which != 8){
+               if($('#'+fe).val().length >= 2){
+                    switch(fe){
+                        case 'aptyear':
+                            if($('#aptyear').val().length == 4){
+                                $('#aptmonth').focus();
+                            }
+                            break;
+                        case 'aptmonth':  
+                            $('#aptday').focus();
+                            break;
+                        case 'aptday':  
+                            $('#apthour').focus();
+                            break;
+                        case 'apthour':  
+                            $('#aptminute').focus();
+                            break;
+                    }
+                } 
+            }else{
+                if(val.match(notnum) != null){
+                    $('#'+fe).val(val.slice(0,$('#'+fe).val().length -1));
+                }
+                if($('#'+fe).val().length == 0){
+                    switch(fe){
+                        case 'aptminute':  
+                            $('#apthour').focus();
+                            break;
+                        case 'apthour':  
+                            $('#aptday').focus();
+                            break;
+                        case 'aptday':  
+                            $('#aptmonth').focus();
+                            break;
+                        case 'aptmonth':  
+                            $('#aptyear').focus();
+                            break;
+                    }
+                }
+            }
+        }
+        if(state=='newapt5'){
+            if(e.which != 8){
+               if($('#'+fe).val().length == 2 && fe == 'aptlhour'){
+                    $('#aptlminutes').focus();
+                } 
+            }else{
+                if($('#'+fe).val().length == 0 && fe == 'aptlminutes'){
+                    $('#aptlhour').focus();         
+                }
+            }
+        } 
+    });
+    
     function getEventTimeData(datetime) {
         eventColor = '';
         eventWord = '';
@@ -1454,6 +1517,10 @@ $(document).ready(function() {
         $("#views .event-"+id).css("background-color",color[1]);
         $("#views .event-"+id).css("margin-top",preciseStart(startpoint)+"px");
         $("#views .event-"+id).css("height",preciseHeight(id,startpoint,duration,day,allday,color[1]));
+        sizecomp = $('.event-'+id).height() / $('.event-'+id+' .eventtitle').height();
+        if(sizecomp<1){
+            $('.event-'+id+' .eventtitle').css('font-size',sizecomp+'em');
+        }
     }
     
     function createEventInMonth(id,title,start,end){
@@ -1521,9 +1588,9 @@ $(document).ready(function() {
         }
         var maxheight=$("#views #eiwc").height()-preciseStart(start);
         if(pix>maxheight){
-            if(allday!=1){
+            //if(allday!=1){
                 drawOffset(id,(pix-maxheight),day,color);
-            }
+           // }
             return (maxheight+50)+"px";
         }
         return pix+"px"; 
