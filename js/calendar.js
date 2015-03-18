@@ -119,7 +119,11 @@ $(document).ready(function() {
          * Close the detail view on click on the x.
          */
         $('#detail #info #close').click(function() {
-            hideDetailView();
+            if(!editchecked){
+                hideDetailView();
+            }else{
+                cAlert('Warning', 'Please save before closing the Detail View!', 2000, 'warning');
+            }
         });
 
         $('#calendar_wrapper #headline #settings > img').click(function() {
@@ -207,10 +211,10 @@ $(document).ready(function() {
                 $('#status > img').each(function (){
                   if($(this).width() > 0){sc++}  
                 });
-                
-                if(sc>1){
+                $('*:focus').focusout();
+                if(sc>1 || $('#alert').css('opacity') > 0){
                     editchecked = !editchecked;
-                    cAlert('Warning', 'Choose your Status!', 2000, 'warning'); 
+                    cAlert('Warning', 'Sumtingwentrong!', 2000, 'warning'); 
                 }else{
                     $(this).css({'transform': 'rotate(-360deg) scale(0)', 'background-color': 'transparent'});
                     setTimeout(function() {
@@ -339,7 +343,7 @@ $(document).ready(function() {
             });
             
             $(obj).focusout(function() {
-                 if($('#'+fe).val().length > 0 || fe == 'website'){   
+                 if(($('#'+fe).val().length > 0 && $('#'+fe).val().indexOf('@') != -1 && $('#'+fe).val().indexOf('.') != -1)|| fe == 'website'){   
                     $('#detail #info #measure').css({'font-size': '0.5em', 'font-family': '"PT Sans", "Arial"'});
                     if($(obj).val()!='') {
                         $('#detail #info #measure').html($(obj).val());
@@ -348,7 +352,7 @@ $(document).ready(function() {
                     }
                     $(obj).css({'width': $('#detail #info #measure').width(), 'background-color': 'transparent'});
                 }else{
-                    cAlert('Warning', 'It is necessary to enter an organizer', 2000, 'warning');
+                    cAlert('Warning', 'It is necessary to enter a mailaddress', 2000, 'warning');
                     $('#'+fe).focus();
                 }
             });
