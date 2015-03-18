@@ -431,6 +431,22 @@ div#welcome h1 {
     color:#025d24;
 }
 
+#back_fullscreen {
+    position:fixed;
+    z-index:1000;
+    top:1.25em;
+    left:1.25em;
+    padding:0.25em;
+    cursor:auto;
+    transition:opacity 1s ease;
+    opacity:0;
+}
+
+#back_fullscreen img {
+    height:3.5em;
+    width:auto;
+}
+
 #close_fullscreen {
     position:fixed;
     z-index:1000;
@@ -441,7 +457,7 @@ div#welcome h1 {
     cursor:pointer;
     font-family:"Arial";
     font-size:2em;
-    display:none;+
+    display:none;
     transition:1s ease;
 }
 

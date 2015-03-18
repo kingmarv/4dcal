@@ -77,6 +77,7 @@ $(document).ready(function() {
                 viewswerehere = false;
             }
             toggleCalendar();
+            $('#back_fullscreen').css({'opacity': '0', 'cursor': 'auto'});
             clearFullscreen('name', 'What\'s going on?*<br><input id="aptname" type="text"><br><span style="font-size:0.5em">*required</span>', '#024d25');
             $('#aptname').focus();
         });
@@ -136,6 +137,20 @@ $(document).ready(function() {
         
         $('#calendar_wrapper #headline #toggle_view').click(function() {
             toggleViews();
+        });
+        
+        $('#back_fullscreen').click(function() {
+            if(state.indexOf('newapt')!=-1) {
+                currentScreen = parseInt(state.replace('newapt',''));
+                if(currentScreen>1) {
+                    if(currentScreen==2) {
+                        $('#back_fullscreen').css({'opacity': '0', 'cursor': 'auto'});
+                    }
+                    state = 'newapt' + (currentScreen-1);
+                    console.log($('#fullscreen div:eq(' + (currentScreen-1) + ')').attr('id'));
+                    changeFullscreen($('#fullscreen div:eq(' + (currentScreen-1) + ')').attr('id'), $('#fullscreen div:eq(' + (currentScreen-2) + ')').attr('id'));
+                }
+            }
         });
 
         /**
@@ -352,7 +367,18 @@ $(document).ready(function() {
      * @param {String} endcolor   Color of the element, which shall be created and animated in
      */
     function changeFullscreen(startid, endid, endcontent, endcolor) {
-        $('#fullscreen').append('<div id="'+endid+'" style="background-color:'+endcolor+'; z-index:'+(parseInt($('#'+startid).css('z-index'))-1)+'"><h1 style="opacity:0; margin-left:50%">'+endcontent+'</h1></div>');
+        already = false;
+        $.each($('#fullscreen div'), function(i, element) {
+            if($(element).attr('id')==endid) {
+                already = true;
+            }
+        });
+        if(endcontent!=undefined && !already) {
+            $('#fullscreen').append('<div id="'+endid+'" style="background-color:'+endcolor+'; z-index:'+(parseInt($('#'+startid).css('z-index'))-1)+'"><h1 style="opacity:0; margin-left:50%">'+endcontent+'</h1></div>');
+        } else {
+            $('#fullscreen #'+endid+' h1').css('margin-left', '50%');
+            $('#fullscreen #'+endid).css({'display': 'flex', 'opacity': '1'});
+        }
         $('#fullscreen #'+startid).css({'opacity': '0'});
         $('#fullscreen #'+startid+' h1').css({'margin-left': '-50%', 'opacity': '0'});
         setTimeout(function() {
@@ -600,6 +626,7 @@ $(document).ready(function() {
                 });
             } else if(state=='newapt1') {
                 state = 'newapt2';
+                $('#back_fullscreen').css({'opacity': '1', 'cursor': 'pointer'});
                 changeFullscreen('name', 'place', 'Where do you go?*<br><input id="aptplace" type="text">', '#024d25');
                 $('#aptplace').focus();
             } else if(state=='newapt2') {
@@ -650,6 +677,8 @@ $(document).ready(function() {
                     $('#aptimgsel').blur();
                 });
             } else if(state=='newapt8') {
+                $('#back_fullscreen').css({'opacity': '0', 'cursor': 'auto'});
+                
                 if(aptallday) {
                     aptstart = $('#aptyear').val()+'-'+$('#aptmonth').val()+'-'+$('#aptday').val()+'T00:00';
                     aptend = $('#aptyear').val()+'-'+$('#aptmonth').val()+'-'+$('#aptday').val() + 'T23:59';
