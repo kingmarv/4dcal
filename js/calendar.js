@@ -122,7 +122,7 @@ $(document).ready(function() {
             if(!editchecked){
                 hideDetailView();
             }else{
-                cAlert('Warning', 'Please save before closing the Detail View!', 2000, 'warning');
+                cAlert('Warning', 'Please save before closing the Detail View!', 4000, 'warning');
             }
         });
 
@@ -216,7 +216,7 @@ $(document).ready(function() {
                     editchecked = !editchecked;
                     cAlert('Warning', 'You have to choose a Status.', 2000, 'warning'); 
                 }else if($('#alert').css('opacity') > 0){
-                    editchecked = !editchecked;                
+                    editchecked = !editchecked;
                 }else{
                     $(this).css({'transform': 'rotate(-360deg) scale(0)', 'background-color': 'transparent'});
                     setTimeout(function() {
@@ -294,7 +294,7 @@ $(document).ready(function() {
                 $('#detail #info #measure').html($('#detail #title').val());
                 $(this).css({'width': $('#detail #info #measure').width(), 'background-color': 'transparent'});
             }else{
-                cAlert('Warning', 'It is necessary to enter a title', 2000, 'warning');
+                cAlert('Warning', 'It is necessary to enter a title', 4000, 'warning');
                 $('#detail #info #title').focus();
             }
         });
@@ -319,7 +319,7 @@ $(document).ready(function() {
                         cAlert('Warning', 'End should be after Start', 2000, 'warning'); 
                     }
                 }else{
-                    cAlert('Warning', 'It is necessary to enter every date field', 2000, 'warning');
+                    cAlert('Warning', 'It is necessary to enter every date field', 4000, 'warning');
                     $('#'+fe).focus();
                 }
             });
@@ -337,7 +337,7 @@ $(document).ready(function() {
                     $('#detail #info #measure').html($(obj).val());
                     $(obj).css({'width': $('#detail #info #measure').width(), 'background-color': 'transparent'});
                 }else{
-                    cAlert('Warning', 'It is necessary to enter a location', 2000, 'warning');
+                    cAlert('Warning', 'It is necessary to enter a location', 4000, 'warning');
                     $('#'+fe).focus();
                 }
             });
@@ -360,7 +360,7 @@ $(document).ready(function() {
                     }
                     $(obj).css({'width': $('#detail #info #measure').width(), 'background-color': 'transparent'});
                 }else{
-                    cAlert('Warning', 'It is necessary to enter a mailaddress', 2000, 'warning');
+                    cAlert('Warning', 'It is necessary to enter a mailaddress', 4000, 'warning');
                     $('#'+fe).focus();
                 }
             });
@@ -558,7 +558,7 @@ $(document).ready(function() {
                         user = $('#user #username').val();
                         userset = true;
                     }else{
-                        cAlert('Warning', 'It is necessary to enter a name!', 2000, 'warning');
+                        cAlert('Warning', 'It is necessary to enter a name!', 4000, 'warning');
                     }
                 } else{
                     changeFullscreen('welcome', 'userloading', '<img src="img/loading.svg" style="height:100px; width:100px">','#04959f');
@@ -662,7 +662,7 @@ $(document).ready(function() {
                     changeFullscreen('name', 'place', 'Where do you go?*<br><input id="aptplace" type="text">', '#024d25');
                     $('#aptplace').focus();
                 }else{
-                    cAlert('Warning', 'It is necessary to enter a name!', 2000, 'warning');
+                    cAlert('Warning', 'It is necessary to enter a name!', 4000, 'warning');
                 }
             } else if(state=='newapt2') {
                 if($('#aptplace').val().length > 0){
@@ -670,7 +670,7 @@ $(document).ready(function() {
                     changeFullscreen('place', 'corganizer', 'Who planned this?*<br><input id="aptorganizer" type="text" placeholder="Mail Address">', '#024d25');
                     $('#aptorganizer').focus();
                 }else{
-                    cAlert('Warning', 'It is necessary to enter a place!', 2000, 'warning');
+                    cAlert('Warning', 'It is necessary to enter a place!', 4000, 'warning');
                 }
             } else if(state=='newapt3') {
                 if($('#aptplace').val().length > 0 && $('#aptorganizer').val().indexOf('@') != -1 && $('#aptorganizer').val().indexOf('.') != -1){
@@ -678,7 +678,7 @@ $(document).ready(function() {
                     changeFullscreen('corganizer', 'start', 'When do you go?*<br><input id="aptyear" type="text" maxlength="4" placeholder="YYYY" style="width:15%"><input id="aptmonth" type="text" maxlength="2" placeholder="MM" style="width:7.5%; margin:0 0.5%"><input id="aptday" type="text" maxlength="2" placeholder="DD" style="width:7.5%"><br><input id="apthour" type="text" maxlength="2" placeholder="HH" style="width:7.5%">:<input id="aptminute" type="text" maxlength="2" placeholder="MM" style="width:7.5%">', '#024d25');
                     $('#aptyear').focus();
                 }else{
-                    cAlert('Warning', 'It is necessary to enter an E-Mail-Address!', 2000, 'warning');
+                    cAlert('Warning', 'It is necessary to enter an E-Mail-Address!', 4000, 'warning');
                 }
             } else if(state=='newapt4') {
                 if($('#aptyear').val().length + $('#aptmonth').val().length + $('#aptday').val().length + $('#apthour').val().length + $('#aptminute').val().length == 12){
@@ -693,7 +693,7 @@ $(document).ready(function() {
                     });
                     $('#aptlhour').focus();
                 }else{
-                    cAlert('Warning', 'It is necessary to enter a full Date!', 2000, 'warning'); 
+                    cAlert('Warning', 'It is necessary to enter a full Date!', 4000, 'warning'); 
                 }
             } else if(state=='newapt5') {
                 if($('#aptlhour').val().length != 0 && $('#aptlminutes').val().length != 0){
@@ -718,7 +718,7 @@ $(document).ready(function() {
                         $('#aptwebsite').focus();
                     });
                 }else{
-                     cAlert('Warning', 'It is necessary to enter a Duration!', 2000, 'warning');  
+                     cAlert('Warning', 'It is necessary to enter a Duration!', 4000, 'warning');  
                 }
             } else if(state=='newapt7') {
                 state = 'newapt8';
