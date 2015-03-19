@@ -212,9 +212,11 @@ $(document).ready(function() {
                   if($(this).width() > 0){sc++}  
                 });
                 $('*:focus').focusout();
-                if(sc>1 || $('#alert').css('opacity') > 0){
+                if(sc>1){
                     editchecked = !editchecked;
-                    cAlert('Warning', 'Sumtingwentrong!', 2000, 'warning'); 
+                    cAlert('Warning', 'You have to choose a Status.', 2000, 'warning'); 
+                }else if($('#alert').css('opacity') > 0){
+                    editchecked = !editchecked;                
                 }else{
                     $(this).css({'transform': 'rotate(-360deg) scale(0)', 'background-color': 'transparent'});
                     setTimeout(function() {
@@ -307,9 +309,15 @@ $(document).ready(function() {
             
             $(obj).focusout(function() {
                 if($('#'+fe).val().length > 0){
-                    $('#detail #info #measure').css({'font-size': '0.5em', 'font-family': '"PT Sans", "Arial"'});
-                    $('#detail #info #measure').html($(this).val());
-                    $(this).css({'width': $('#detail #info #measure').width(), 'background-color': 'transparent'});
+                    startdate = new Date($('#startdatey').val() + '/' + $('#startdatem').val() + '/' + $('#startdated').val() + ' ' + $('#starttimeh').val() + ':' + $('#starttimem').val());
+                    enddate = new Date($('#enddatey').val() + '/' + $('#enddatem').val() + '/' + $('#enddated').val() + ' ' + $('#endtimeh').val() + ':' + $('#endtimem').val());
+                    if(enddate.getTime > startdate.getTime){
+                        $('#detail #info #measure').css({'font-size': '0.5em', 'font-family': '"PT Sans", "Arial"'});
+                        $('#detail #info #measure').html($(this).val());
+                        $(this).css({'width': $('#detail #info #measure').width(), 'background-color': 'transparent'});
+                    }else{
+                        cAlert('Warning', 'End should be after Start', 2000, 'warning'); 
+                    }
                 }else{
                     cAlert('Warning', 'It is necessary to enter every date field', 2000, 'warning');
                     $('#'+fe).focus();
