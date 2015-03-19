@@ -678,6 +678,8 @@ $(document).ready(function() {
                 });
             } else if(state=='newapt8') {
                 $('#back_fullscreen').css({'opacity': '0', 'cursor': 'auto'});
+                $('#close_fullscreen').css('opacity', '0');
+                changeFullscreen('image', 'sumloading', '<img src="img/loading.svg" style="height:100px; width:100px">', '#024d25');
                 
                 if(aptallday) {
                     aptstart = $('#aptyear').val()+'-'+$('#aptmonth').val()+'-'+$('#aptday').val()+'T00:00';
@@ -743,8 +745,6 @@ $(document).ready(function() {
                         function afterCreation() {
                             state = 'newaptsummary';
                             tmpname = ($('#aptname').val().length<23) ? $('#aptname').val() : $('#aptname').val().slice(0,20)+'...';
-                            $('#close_fullscreen').css('opacity', '0');
-                            changeFullscreen('image', 'sumloading', '<img src="img/loading.svg" style="height:100px; width:100px">', '#024d25');
                             syncEvents(function(data, success) {
                                 if(aptallday) {
                                     changeFullscreen('sumloading', 'summary', 'Your appointment has been saved!<br>'+tmpname+'<br>All day on '+$('#aptyear').val()+'/'+$('#aptmonth').val()+'/'+$('#aptday').val()+'!', '#024d25');
