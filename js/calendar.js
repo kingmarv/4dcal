@@ -821,22 +821,22 @@ $(document).ready(function() {
                         } else {
                             afterCreation();
                         }
-                        function afterCreation() {
-                            state = 'newaptsummary';
-                            tmpname = ($('#aptname').val().length<23) ? $('#aptname').val() : $('#aptname').val().slice(0,20)+'...';
-                            syncEvents(function(data, success) {
-                                if(aptallday) {
-                                    changeFullscreen('sumloading', 'summary', 'Your appointment has been saved!<br>'+tmpname+'<br>All day on '+$('#aptyear').val()+'/'+$('#aptmonth').val()+'/'+$('#aptday').val()+'!', '#024d25');
-                                } else {
-                                    changeFullscreen('sumloading', 'summary', 'Your appointment has been saved!<br>'+tmpname+'<br>On '+$('#aptyear').val()+'/'+$('#aptmonth').val()+'/'+$('#aptday').val()+' at '+$('#apthour').val()+':'+$('#aptminute').val()+'!', '#024d25');
-                                }
-                                setTimeout(function() {
-                                    state = 'calendar';
-                                    $('#close_fullscreen').css('opacity', '1');
-                                    toggleCalendar();
-                                }, 4000);
-                            });
-                        }
+                    }
+                    function afterCreation() {
+                        state = 'newaptsummary';
+                        tmpname = ($('#aptname').val().length<23) ? $('#aptname').val() : $('#aptname').val().slice(0,20)+'...';
+                        syncEvents(function(data, success) {
+                            if(aptallday) {
+                                changeFullscreen('sumloading', 'summary', 'Your appointment has been saved!<br>'+tmpname+'<br>All day on '+$('#aptyear').val()+'/'+$('#aptmonth').val()+'/'+$('#aptday').val()+'!', '#024d25');
+                            } else {
+                                changeFullscreen('sumloading', 'summary', 'Your appointment has been saved!<br>'+tmpname+'<br>On '+$('#aptyear').val()+'/'+$('#aptmonth').val()+'/'+$('#aptday').val()+' at '+$('#apthour').val()+':'+$('#aptminute').val()+'!', '#024d25');
+                            }
+                            setTimeout(function() {
+                                state = 'calendar';
+                                $('#close_fullscreen').css('opacity', '1');
+                                toggleCalendar();
+                            }, 4000);
+                        });
                     }
                 });
             }
@@ -1009,14 +1009,16 @@ $(document).ready(function() {
         thisDay = [];
         var i=0;
         if(events[i]!=undefined) {
-            while(new Date(events[i].start).getTime()<today.getTime()) {
+            while(new Date(events[i].start + 'Z').getTime()<today.getTime()) {
+                console.log(new Date(events[i].start).getTime() + '#' + today.getTime());
                 i++;
                 if(events[i]==undefined) {
                     break;
                 }
             }
             if(events[i]!=undefined) {
-                while(new Date(events[i].start).getTime()<today.getTime()+(24*3600*1000)) {
+                while(new Date(events[i].start + 'Z').getTime()<today.getTime()+(24*3600*1000)) {
+                    alert(events[i].start);
                     eventdate = new Date(new Date(events[i].start + 'Z').getTime()-(3600*1000*currentTimezone));
                     eventdend = new Date(new Date(events[i].end + 'Z').getTime()-(3600*1000*currentTimezone));
                     if(eventdate.getDate() == eventdend.getDate()) {
