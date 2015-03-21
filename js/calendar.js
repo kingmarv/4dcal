@@ -311,12 +311,13 @@ $(document).ready(function() {
                 if($('#'+fe).val().length > 0){
                     startdate = new Date($('#startdatey').val() + '/' + $('#startdatem').val() + '/' + $('#startdated').val() + ' ' + $('#starttimeh').val() + ':' + $('#starttimem').val());
                     enddate = new Date($('#enddatey').val() + '/' + $('#enddatem').val() + '/' + $('#enddated').val() + ' ' + $('#endtimeh').val() + ':' + $('#endtimem').val());
-                    if(enddate.getTime > startdate.getTime){
+                    if(enddate.getTime() > startdate.getTime()){
                         $('#detail #info #measure').css({'font-size': '0.5em', 'font-family': '"PT Sans", "Arial"'});
                         $('#detail #info #measure').html($(this).val());
                         $(this).css({'width': $('#detail #info #measure').width(), 'background-color': 'transparent'});
                     }else{
-                        cAlert('Warning', 'End should be after Start', 2000, 'warning'); 
+                        cAlert('Warning', 'End should be after Start', 4000, 'warning');
+                        $('#'+fe).focus();
                     }
                 }else{
                     cAlert('Warning', 'It is necessary to enter every date field', 4000, 'warning');
