@@ -120,7 +120,11 @@ $(document).ready(function() {
          * Close the detail view on click on the x.
          */
         $('#detail #info #close').click(function() {
-            hideDetailView();
+            if(!editchecked){
+                hideDetailView();
+            }else{
+                cAlert('Warning', 'Please save before closing the Detail View!', 4000, 'warning');
+            }
         });
 
         $('#calendar_wrapper #headline #settings > img').click(function() {
@@ -218,49 +222,61 @@ $(document).ready(function() {
         var editchecked = false;
         $('#detail #info #edit').click(function() {
             if(editchecked) {
-                $(this).css({'transform': 'rotate(-360deg) scale(0)', 'background-color': 'transparent'});
-                setTimeout(function() {
-                    $('#detail #info #edit img').attr('src', 'img/edit.svg');
-                    $('#detail #info #edit').css({'transform': 'rotate(0deg) scale(1)'});
-                }, 250);
-                
-                //Disable inputs
-                $('#detail #info input[type="text"]').attr('disabled', 'true');
-                if(stattoggle!=false||stattoggle!=undefined) {
-                    $('#detail #info #status').click();
-                }
-                $('#detail #info #status img').off('click');
-                $('#detail #info #status img').css({'cursor': 'auto'});
-                
-                editstart = $('#detail #info #startdatey').val() + '-' + $('#detail #info #startdatem').val() + '-' + $('#detail #info #startdated').val() + 'T' + $('#detail #info #starttimeh').val() + ':' + $('#detail #info #starttimem').val();
-                editend = $('#detail #info #enddatey').val() + '-' + $('#detail #info #enddatem').val() + '-' + $('#detail #info #enddated').val() + 'T' + $('#detail #info #endtimeh').val() + ':' + $('#detail #info #endtimem').val();
-                
-                /** TIMEZONE FIX **/
-                editstart = new Date((new Date(editstart + 'Z').getTime())+(1000*3600*currentTimezone*-1)).toISOString().substr(0,16);
-                editend = new Date((new Date(editend + 'Z').getTime())+(1000*3600*currentTimezone*-1)).toISOString().substr(0,16);
-
-                $.post('http://host.bisswanger.com/dhbw/calendar.php', {
-                    'user': user,
-                    'action': 'update',
-                    'format': 'json',
-                    'id': state.split('_')[1],
-                    'title': $('#detail #info #title').val(),
-                    'location': $('#detail #info #locin').val(),
-                    'organizer': $('#detail #info #orgin').val(),
-                    'start': editstart,
-                    'end': editend,
-                    'status': stattoggle.substr(0,1).toUpperCase()+stattoggle.substr(1),
-                    'allday': 0,
-                    'webpage': $('#detail #info #website').val()
-                }, function(data, success) {
-                    if(data.error!=undefined) {
-                        cAlert('No edit today<br>my app has broke away', 'Dang it!<br>#'+ data.error.id + ' with message<br>' + data.error.text + '<br>has occured.', 7500, 'error');
-                        drawDetailView(state.split('_')[1]);
-                    } else {
-                        cAlert('Edit successful', $('#detail #info #title').val() + ' was edited.', 3500, 'success');
-                    }
-                    syncEvents();
+                sc = 0;
+                $('#status > img').each(function (){
+                  if($(this).width() > 0){sc++}  
                 });
+                $('*:focus').focusout();
+                if(sc>1){
+                    editchecked = !editchecked;
+                    cAlert('Warning', 'You have to choose a Status.', 2000, 'warning'); 
+                }else if($('#alert').css('opacity') > 0){
+                    editchecked = !editchecked;
+                }else{
+                    $(this).css({'transform': 'rotate(-360deg) scale(0)', 'background-color': 'transparent'});
+                    setTimeout(function() {
+                        $('#detail #info #edit img').attr('src', 'img/edit.svg');
+                        $('#detail #info #edit').css({'transform': 'rotate(0deg) scale(1)'});
+                    }, 250);
+                    
+                    //Disable inputs
+                    $('#detail #info input[type="text"]').attr('disabled', 'true');
+                    if(stattoggle!=false||stattoggle!=undefined) {
+                        $('#detail #info #status').click();
+                    }
+                    $('#detail #info #status img').off('click');
+                    $('#detail #info #status img').css({'cursor': 'auto'});
+                    
+                    editstart = $('#detail #info #startdatey').val() + '-' + $('#detail #info #startdatem').val() + '-' + $('#detail #info #startdated').val() + 'T' + $('#detail #info #starttimeh').val() + ':' + $('#detail #info #starttimem').val();
+                    editend = $('#detail #info #enddatey').val() + '-' + $('#detail #info #enddatem').val() + '-' + $('#detail #info #enddated').val() + 'T' + $('#detail #info #endtimeh').val() + ':' + $('#detail #info #endtimem').val();
+                    
+                    /** TIMEZONE FIX **/
+                    editstart = new Date((new Date(editstart + 'Z').getTime())+(1000*3600*currentTimezone*-1)).toISOString().substr(0,16);
+                    editend = new Date((new Date(editend + 'Z').getTime())+(1000*3600*currentTimezone*-1)).toISOString().substr(0,16);
+    
+                    $.post('http://host.bisswanger.com/dhbw/calendar.php', {
+                        'user': user,
+                        'action': 'update',
+                        'format': 'json',
+                        'id': state.split('_')[1],
+                        'title': $('#detail #info #title').val(),
+                        'location': $('#detail #info #locin').val(),
+                        'organizer': $('#detail #info #orgin').val(),
+                        'start': editstart,
+                        'end': editend,
+                        'status': stattoggle.substr(0,1).toUpperCase()+stattoggle.substr(1),
+                        'allday': 0,
+                        'webpage': $('#detail #info #website').val()
+                    }, function(data, success) {
+                        if(data.error!=undefined) {
+                            cAlert('No edit today<br>my app has broke away', 'Dang it!<br>#'+ data.error.id + ' with message<br>' + data.error.text + '<br>has occured.', 7500, 'error');
+                            drawDetailView(state.split('_')[1]);
+                        } else {
+                            cAlert('Edit successful', $('#detail #info #title').val() + ' was edited.', 3500, 'success');
+                        }
+                        syncEvents();
+                    });
+                }
             } else {
                 cAlert('Edit enabled', 'Just click on the entries you want to edit.<br>Afterwards, click on the save icon.', 3500);
                 $(this).css({'transform': 'rotate(-360deg) scale(0)'});
@@ -288,48 +304,81 @@ $(document).ready(function() {
         });
         
         $('#detail #info #title').focusout(function() {
-            $('#detail #info #measure').css({'font-size': '1em', 'font-family': '"Slabo 27px", "Arial"'});
-            $('#detail #info #measure').html($('#detail #title').val());
-            $(this).css({'width': $('#detail #info #measure').width(), 'background-color': 'transparent'});
+            if($('#detail #info #title').val().length > 0){
+                $('#detail #info #measure').css({'font-size': '1em', 'font-family': '"Slabo 27px", "Arial"'});
+                $('#detail #info #measure').html($('#detail #title').val());
+                $(this).css({'width': $('#detail #info #measure').width(), 'background-color': 'transparent'});
+            }else{
+                cAlert('Warning', 'It is necessary to enter a title', 4000, 'warning');
+                $('#detail #info #title').focus();
+            }
         });
+        
+        var fe;
         
         $.each($('#detail #info #time input[type="text"]'), function(i, obj) {
             $(obj).focusin(function() {
                 $(this).css({'width': '7.5%', 'background-color': 'rgba(0,0,0,0.3)'});
+                fe = $(this).attr('id');
             });
             
             $(obj).focusout(function() {
-                $('#detail #info #measure').css({'font-size': '0.5em', 'font-family': '"PT Sans", "Arial"'});
-                $('#detail #info #measure').html($(this).val());
-                $(this).css({'width': $('#detail #info #measure').width(), 'background-color': 'transparent'});
+                if($('#'+fe).val().length > 0){
+                    startdate = new Date($('#startdatey').val() + '/' + $('#startdatem').val() + '/' + $('#startdated').val() + ' ' + $('#starttimeh').val() + ':' + $('#starttimem').val());
+                    enddate = new Date($('#enddatey').val() + '/' + $('#enddatem').val() + '/' + $('#enddated').val() + ' ' + $('#endtimeh').val() + ':' + $('#endtimem').val());
+                    if(enddate.getTime() > startdate.getTime()){
+                        $('#detail #info #measure').css({'font-size': '0.5em', 'font-family': '"PT Sans", "Arial"'});
+                        $('#detail #info #measure').html($(this).val());
+                        $(this).css({'width': $('#detail #info #measure').width(), 'background-color': 'transparent'});
+                    }else{
+                        cAlert('Warning', 'End should be after Start', 4000, 'warning');
+                        $('#'+fe).focus();
+                    }
+                }else{
+                    cAlert('Warning', 'It is necessary to enter every date field', 4000, 'warning');
+                    $('#'+fe).focus();
+                }
             });
         });
         
         $.each($('#detail #info #location input[type="text"]'), function(i, obj) {
             $(obj).focusin(function() {
                 $(obj).css({'width': '90%', 'background-color': 'rgba(0,0,0,0.3)'});
+                fe = $(this).attr('id');
             });
             
             $(obj).focusout(function() {
-                $('#detail #info #measure').css({'font-size': '0.5em', 'font-family': '"PT Sans", "Arial"'});
-                $('#detail #info #measure').html($(obj).val());
-                $(obj).css({'width': $('#detail #info #measure').width(), 'background-color': 'transparent'});
+                if($('#'+fe).val().length > 0){
+                    $('#detail #info #measure').css({'font-size': '0.5em', 'font-family': '"PT Sans", "Arial"'});
+                    $('#detail #info #measure').html($(obj).val());
+                    $(obj).css({'width': $('#detail #info #measure').width(), 'background-color': 'transparent'});
+                }else{
+                    cAlert('Warning', 'It is necessary to enter a location', 4000, 'warning');
+                    $('#'+fe).focus();
+                }
             });
         });
         
         $.each($('#detail #info #organizer input[type="text"]'), function(i, obj) {
             $(obj).focusin(function() {
                 $(obj).css({'width': '45%', 'background-color': 'rgba(0,0,0,0.3)'});
+                fe = $(this).attr('id');
+                console.log(fe);
             });
             
             $(obj).focusout(function() {
-                $('#detail #info #measure').css({'font-size': '0.5em', 'font-family': '"PT Sans", "Arial"'});
-                if($(obj).val()!='') {
-                    $('#detail #info #measure').html($(obj).val());
-                } else {
-                    $('#detail #info #measure').html('no website');
+                 if(($('#'+fe).val().length > 0 && $('#'+fe).val().indexOf('@') != -1 && $('#'+fe).val().indexOf('.') != -1)|| fe == 'website'){   
+                    $('#detail #info #measure').css({'font-size': '0.5em', 'font-family': '"PT Sans", "Arial"'});
+                    if($(obj).val()!='') {
+                        $('#detail #info #measure').html($(obj).val());
+                    } else {
+                        $('#detail #info #measure').html('no website');
+                    }
+                    $(obj).css({'width': $('#detail #info #measure').width(), 'background-color': 'transparent'});
+                }else{
+                    cAlert('Warning', 'It is necessary to enter a mailaddress', 4000, 'warning');
+                    $('#'+fe).focus();
                 }
-                $(obj).css({'width': $('#detail #info #measure').width(), 'background-color': 'transparent'});
             });
         });
         
@@ -529,146 +578,176 @@ $(document).ready(function() {
     $(document).keypress(function(e) {
         if(e.which == 13) {
             if(state=='user') {
+                userset = false;
                 if($.cookie('user')==undefined) {
-                    changeFullscreen('user', 'userloading', '<img src="img/loading.svg" style="height:100px; width:100px">','#04959f');
-                    user = $('#user #username').val();
-                } else {
+                    if($('#username').val().length > 0){
+                        changeFullscreen('user', 'userloading', '<img src="img/loading.svg" style="height:100px; width:100px">','#04959f');
+                        user = $('#user #username').val();
+                        userset = true;
+                    }else{
+                        cAlert('Warning', 'It is necessary to enter a name!', 4000, 'warning');
+                    }
+                } else{
                     changeFullscreen('welcome', 'userloading', '<img src="img/loading.svg" style="height:100px; width:100px">','#04959f');
                     user = $.cookie('user');
+                    userset = true;
                 }
-                state = "calendarlist"
-                var titles = [];
-                var times = [];
-                var eventData = []
-                syncEvents(function(data, success) {
-                    i = 0;
-                    tmpdate = new Date().getTime();
-                    if(events[i]!=undefined) {
-                        while(new Date(events[i].start).getTime()<tmpdate) {
-                            i++;
-                            if(events[i]==undefined) {
-                                break;
-                            }
-                        }
-                    }
-                    for(j = 0; j<3; j++) {
+                
+                if(userset){
+                    state = "calendarlist"
+                    var titles = [];
+                    var times = [];
+                    var eventData = []
+                    syncEvents(function(data, success) {
+                        i = 0;
+                        tmpdate = new Date().getTime();
                         if(events[i]!=undefined) {
-                            titles[j] = events[i].title;
-                            times[j] = events[i].start.split('T')[1];                        
-                            eventData[j] = getEventTimeData(events[i].start);
-                        } else {
-                            if(j==0) {
-                                titles[0] = 'This is where your day is shown and you have a quick look';
-                                times[0] = 'it';
-                                eventData[0] = ['', '#024d25'];
-                                titles[1] = 'The colors indicate the daytime. This would be';
-                                times[1] = 'night';
-                                eventData[1] = ['', '#010f47'];
-                                titles[2] = 'and enjoy making appointments';
-                                times[2] = 'this place';
-                                eventData[2] = ['So welcome -', '#d90000'];
-                                break;
-                            } else if(j==1) {
-                                titles[j] = 'You\'re free';
-                                times[j] = 'this time';
-                                eventData[j] = ['Enjoy!', '#024d25'];
-                            } else if(j==2) {
-                                titles[j] = 'Nothing more';
-                                times[j] = 'the moment';
-                                eventData[j] = ['Free Time!', '#024d25'];
+                            while(new Date(events[i].start).getTime()<tmpdate) {
+                                i++;
+                                if(events[i]==undefined) {
+                                    break;
+                                }
                             }
                         }
-                        i++;
-                    }
-                    if(currentDaytime==0) {
-                        greeting = "Have a good night,";
-                    } else if(currentDaytime==1) {
-                        greeting = "Good morning,";
-                    } else if(currentDaytime==2) {
-                        greeting = "Hello";
-                    } else {
-                        greeting = "Good evening,";
-                    }
-                    changeFullscreen('userloading', 'hello', greeting+' '+user+'!', '#04959f');
-                    if($.cookie('overview')=='true') {
-                        setTimeout(function() {
-                            fromFullscreenToTop('hello', 25, 75, '#04756f', eventData[0][1]);
+                        for(j = 0; j<3; j++) {
+                            if(events[i]!=undefined) {
+                                titles[j] = events[i].title;
+                                times[j] = events[i].start.split('T')[1];                        
+                                eventData[j] = getEventTimeData(events[i].start);
+                            } else {
+                                if(j==0) {
+                                    titles[0] = 'This is where your day is shown and you have a quick look';
+                                    times[0] = 'it';
+                                    eventData[0] = ['', '#024d25'];
+                                    titles[1] = 'The colors indicate the daytime. This would be';
+                                    times[1] = 'night';
+                                    eventData[1] = ['', '#010f47'];
+                                    titles[2] = 'and enjoy making appointments';
+                                    times[2] = 'this place';
+                                    eventData[2] = ['So welcome -', '#d90000'];
+                                    break;
+                                } else if(j==1) {
+                                    titles[j] = 'You\'re free';
+                                    times[j] = 'this time';
+                                    eventData[j] = ['Enjoy!', '#024d25'];
+                                } else if(j==2) {
+                                    titles[j] = 'Nothing more';
+                                    times[j] = 'the moment';
+                                    eventData[j] = ['Free Time!', '#024d25'];
+                                }
+                            }
+                            i++;
+                        }
+                        if(currentDaytime==0) {
+                            greeting = "Have a good night,";
+                        } else if(currentDaytime==1) {
+                            greeting = "Good morning,";
+                        } else if(currentDaytime==2) {
+                            greeting = "Hello";
+                        } else {
+                            greeting = "Good evening,";
+                        }
+                        changeFullscreen('userloading', 'hello', greeting+' '+user+'!', '#04959f');
+                        if($.cookie('overview')=='true') {
                             setTimeout(function() {
-                                changeFullscreen('hello', 'nextaptmnt', eventData[0][0]+' '+titles[0]+' at '+times[0]+'.', eventData[0][1]);
-                            }, 1100);
-                            setTimeout(function() {
-                                fromFullscreenToTop('nextaptmnt', 25, 50, eventData[0][1], eventData[1][1]);
+                                fromFullscreenToTop('hello', 25, 75, '#04756f', eventData[0][1]);
                                 setTimeout(function() {
-                                    changeFullscreen('nextaptmnt', '2ndaptmnt', eventData[1][0]+' '+titles[1]+' at '+times[1]+'.', eventData[1][1]);
-                                    setTimeout(function() {
-                                        fromFullscreenToTop('2ndaptmnt', 25, 25, eventData[1][1], eventData[2][1])
-                                        setTimeout(function() {
-                                            changeFullscreen('2ndaptmnt', '3rdaptmnt', eventData[2][0]+' '+titles[2]+' at '+times[2]+'.', eventData[2][1]);
-                                            setTimeout(function() {
-                                                toggleCalendar();
-                                                setTimeout(function() {
-                                                    $('#close_fullscreen').css('display', 'block');
-                                                }, 1000);
-                                            }, 2400);
-                                        }, 1100);
-                                    }, 2400);
+                                    changeFullscreen('hello', 'nextaptmnt', eventData[0][0]+' '+titles[0]+' at '+times[0]+'.', eventData[0][1]);
                                 }, 1100);
-                            }, 3500);
-                        }, 2000);
-                    } else {
-                        setTimeout(function() {
-                            toggleCalendar();
+                                setTimeout(function() {
+                                    fromFullscreenToTop('nextaptmnt', 25, 50, eventData[0][1], eventData[1][1]);
+                                    setTimeout(function() {
+                                        changeFullscreen('nextaptmnt', '2ndaptmnt', eventData[1][0]+' '+titles[1]+' at '+times[1]+'.', eventData[1][1]);
+                                        setTimeout(function() {
+                                            fromFullscreenToTop('2ndaptmnt', 25, 25, eventData[1][1], eventData[2][1])
+                                            setTimeout(function() {
+                                                changeFullscreen('2ndaptmnt', '3rdaptmnt', eventData[2][0]+' '+titles[2]+' at '+times[2]+'.', eventData[2][1]);
+                                                setTimeout(function() {
+                                                    toggleCalendar();
+                                                    setTimeout(function() {
+                                                        $('#close_fullscreen').css('display', 'block');
+                                                    }, 1000);
+                                                }, 2400);
+                                            }, 1100);
+                                        }, 2400);
+                                    }, 1100);
+                                }, 3500);
+                            }, 2000);
+                        } else {
                             setTimeout(function() {
-                                $('#close_fullscreen').css('display', 'block');
-                            }, 1000);
-                        }, 2000);
-                    }
-                });
+                                toggleCalendar();
+                                setTimeout(function() {
+                                    $('#close_fullscreen').css('display', 'block');
+                                }, 1000);
+                            }, 2000);
+                        }
+                    });
+                }
             } else if(state=='newapt1') {
-                state = 'newapt2';
-                $('#back_fullscreen').css({'opacity': '1', 'cursor': 'pointer'});
-                changeFullscreen('name', 'place', 'Where do you go?*<br><input id="aptplace" type="text">', '#024d25');
-                $('#aptplace').focus();
+                if($('#aptname').val().length > 0){
+                    state = 'newapt2';
+                    $('#back_fullscreen').css({'opacity': '1', 'cursor': 'pointer'});
+                    changeFullscreen('name', 'place', 'Where do you go?*<br><input id="aptplace" type="text">', '#024d25');
+                    $('#aptplace').focus();
+                }else{
+                    cAlert('Warning', 'It is necessary to enter a name!', 4000, 'warning');
+                }
             } else if(state=='newapt2') {
-                state = 'newapt3';
-                changeFullscreen('place', 'corganizer', 'Who planned this?*<br><input id="aptorganizer" type="text" placeholder="Mail Address">', '#024d25');
-                $('#aptorganizer').focus();
+                if($('#aptplace').val().length > 0){
+                    state = 'newapt3';
+                    changeFullscreen('place', 'corganizer', 'Who planned this?*<br><input id="aptorganizer" type="text" placeholder="Mail Address">', '#024d25');
+                    $('#aptorganizer').focus();
+                }else{
+                    cAlert('Warning', 'It is necessary to enter a place!', 4000, 'warning');
+                }
             } else if(state=='newapt3') {
-                state = 'newapt4';
-                changeFullscreen('corganizer', 'start', 'When do you go?*<br><input id="aptyear" type="text" maxlength="4" placeholder="YYYY" style="width:15%"><input id="aptmonth" type="text" maxlength="2" placeholder="MM" style="width:7.5%; margin:0 0.5%"><input id="aptday" type="text" maxlength="2" placeholder="DD" style="width:7.5%"><br><input id="apthour" type="text" maxlength="2" placeholder="HH" style="width:7.5%">:<input id="aptminute" type="text" maxlength="2" placeholder="MM" style="width:7.5%">', '#024d25');
-                $('#aptyear').focus();
+                if($('#aptplace').val().length > 0 && $('#aptorganizer').val().indexOf('@') != -1 && $('#aptorganizer').val().indexOf('.') != -1){
+                    state = 'newapt4';
+                    changeFullscreen('corganizer', 'start', 'When do you go?*<br><input id="aptyear" type="text" maxlength="4" placeholder="YYYY" style="width:15%"><input id="aptmonth" type="text" maxlength="2" placeholder="MM" style="width:7.5%; margin:0 0.5%"><input id="aptday" type="text" maxlength="2" placeholder="DD" style="width:7.5%"><br><input id="apthour" type="text" maxlength="2" placeholder="HH" style="width:7.5%">:<input id="aptminute" type="text" maxlength="2" placeholder="MM" style="width:7.5%">', '#024d25');
+                    $('#aptyear').focus();
+                }else{
+                    cAlert('Warning', 'It is necessary to enter an E-Mail-Address!', 4000, 'warning');
+                }
             } else if(state=='newapt4') {
-                state = 'newapt5';
-                changeFullscreen('start', 'end', 'How long is this event?*<br><input id="aptlhour" type="text" style="margin-bottom:2%; width:10%">h<input id="aptlminutes" type="text" maxlength="2" style="margin-bottom:2%; width:10%">min '+currTimezString+'<br><a href="javascript:void(0)" id="aptallday">All Day</a>', '#024d25');
-                aptallday = false;
-                $('#aptallday').click(function() {
-                    aptallday = true;
-                    var tmpe = jQuery.Event("keypress");
-                    tmpe.which = 13;
-                    $(document).trigger(tmpe);
-                });
-                $('#aptlhour').focus();
+                if($('#aptyear').val().length + $('#aptmonth').val().length + $('#aptday').val().length + $('#apthour').val().length + $('#aptminute').val().length == 12){
+                    state = 'newapt5';
+                    changeFullscreen('start', 'end', 'How long is this event?*<br><input id="aptlhour" type="text" style="margin-bottom:2%; width:10%">h<input id="aptlminutes" type="text" maxlength="2" style="margin-bottom:2%; width:10%">min '+currTimezString+'<br><a href="javascript:void(0)" id="aptallday">All Day</a>', '#024d25');
+                    aptallday = false;
+                    $('#aptallday').click(function() {
+                        aptallday = true;
+                        var tmpe = jQuery.Event("keypress");
+                        tmpe.which = 13;
+                        $(document).trigger(tmpe);
+                    });
+                    $('#aptlhour').focus();
+                }else{
+                    cAlert('Warning', 'It is necessary to enter a full Date!', 4000, 'warning'); 
+                }
             } else if(state=='newapt5') {
-                state = 'newapt6';
-                changeFullscreen('end', 'status', 'Are you available whilst this?*<br><a href="javascript:void(0)" id="aptfree">Free</a><a href="javascript:void(0)" id="aptbusy">Busy</a><a href="javascript:void(0)" id="apttent">Tentative</a>', '#024d25');
-                $('#aptfree').click(function() {
-                    aptstatus = 'Free';
-                    state = 'newapt7';
-                    changeFullscreen('status', 'webpage', 'Is there a website?<br><input id="aptwebsite" type="text"><br><span style="font-size:0.5em">Enter to skip</span>', '#024d25');
-                    $('#aptwebsite').focus();
-                });
-                $('#aptbusy').click(function() {
-                    aptstatus = 'Busy';
-                    state = 'newapt7';
-                    changeFullscreen('status', 'webpage', 'Is there a website?<br><input id="aptwebsite" type="text"><br><span style="font-size:0.5em">Enter to skip</span>', '#024d25');
-                    $('#aptwebsite').focus();
-                });
-                $('#apttent').click(function() {
-                    aptstatus = 'Tentative';
-                    state = 'newapt7';
-                    changeFullscreen('status', 'webpage', 'Is there a website?<br><input id="aptwebsite" type="text"><br><span style="font-size:0.5em">Enter to skip</span>', '#024d25');
-                    $('#aptwebsite').focus();
-                });
+                if($('#aptlhour').val().length != 0 && $('#aptlminutes').val().length != 0){
+                    state = 'newapt6';
+                    changeFullscreen('end', 'status', 'Are you available whilst this?*<br><a href="javascript:void(0)" id="aptfree">Free</a><a href="javascript:void(0)" id="aptbusy">Busy</a><a href="javascript:void(0)" id="apttent">Tentative</a>', '#024d25');
+                    $('#aptfree').click(function() {
+                        aptstatus = 'Free';
+                        state = 'newapt7';
+                        changeFullscreen('status', 'webpage', 'Is there a website?<br><input id="aptwebsite" type="text"><br><span style="font-size:0.5em">Enter to skip</span>', '#024d25');
+                        $('#aptwebsite').focus();
+                    });
+                    $('#aptbusy').click(function() {
+                        aptstatus = 'Busy';
+                        state = 'newapt7';
+                        changeFullscreen('status', 'webpage', 'Is there a website?<br><input id="aptwebsite" type="text"><br><span style="font-size:0.5em">Enter to skip</span>', '#024d25');
+                        $('#aptwebsite').focus();
+                    });
+                    $('#apttent').click(function() {
+                        aptstatus = 'Tentative';
+                        state = 'newapt7';
+                        changeFullscreen('status', 'webpage', 'Is there a website?<br><input id="aptwebsite" type="text"><br><span style="font-size:0.5em">Enter to skip</span>', '#024d25');
+                        $('#aptwebsite').focus();
+                    });
+                }else{
+                     cAlert('Warning', 'It is necessary to enter a Duration!', 4000, 'warning');  
+                }
             } else if(state=='newapt7') {
                 state = 'newapt8';
                 changeFullscreen('webpage', 'image', 'Do you want to attach an image?<br><a href="javascript:void(0)" id="aptimgsel">Choose Image</a><input id="aptimage" type="file" accept="image/jpeg, image/png" style="display:none;"><br><span style="font-size:0.5em">Enter to skip or continue</span>', '#024d25');
@@ -773,6 +852,11 @@ $(document).ready(function() {
             if(val.match(notnum) != null){
                 $('#'+fe).val(val.slice(0,$('#'+fe).val().length -1));
             }
+            if($('#aptmonth').val() > 12){$('#aptmonth').val('')};
+            if($('#aptday').val() > 31){$('#aptday').val('')};
+            if($('#apthour').val() > 23){$('#apthour').val('')};
+            if($('#aptminute').val() > 59){$('#aptminute').val('')};
+            
             if(e.which != 8){
                if($('#'+fe).val().length >= 2){
                     switch(fe){
@@ -796,6 +880,7 @@ $(document).ready(function() {
                 if(val.match(notnum) != null){
                     $('#'+fe).val(val.slice(0,$('#'+fe).val().length -1));
                 }
+                if($('#aptlminutes').val() > 59){$('#aptlminutes').val('')};
                 if($('#'+fe).val().length == 0){
                     switch(fe){
                         case 'aptminute':  
@@ -815,6 +900,9 @@ $(document).ready(function() {
             }
         }
         if(state=='newapt5'){
+            if(val.match(notnum) != null){
+                    $('#'+fe).val(val.slice(0,$('#'+fe).val().length -1));
+                }
             if(e.which != 8){
                if($('#'+fe).val().length == 2 && fe == 'aptlhour'){
                     $('#aptlminutes').focus();

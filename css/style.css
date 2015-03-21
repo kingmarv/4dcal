@@ -503,6 +503,10 @@ div#welcome h1 {
     background-color:#8f0000;
 }
 
+#alert #headline.warning {
+    background-color:#ff8c00;
+}
+
 #alert #content {
     background-color:#393939;
     color:#ffffff;
