@@ -611,28 +611,32 @@ $(document).ready(function() {
                         }
                         for(j = 0; j<3; j++) {
                             if(events[i]!=undefined) {
-                                titles[j] = events[i].title;
-                                times[j] = events[i].start.split('T')[1];                        
+                                if(events[i].title.length>15) {
+                                    titles[j] = events[i].title.slice(0,14)+'...';
+                                } else {
+                                    titles[j] = events[i].title;
+                                }
+                                times[j] = ' at ' + events[i].start.split('T')[1] + '.';                        
                                 eventData[j] = getEventTimeData(events[i].start);
                             } else {
                                 if(j==0) {
-                                    titles[0] = 'This is where your day is shown and you have a quick look';
-                                    times[0] = 'it';
+                                    titles[0] = 'Once you have appointments this will be what\'s coming up!';
+                                    times[0] = '';
                                     eventData[0] = ['', '#024d25'];
-                                    titles[1] = 'The colors indicate the daytime. This would be';
-                                    times[1] = 'night';
+                                    titles[1] = 'The colors indicate the time. This would be at night.';
+                                    times[1] = '';
                                     eventData[1] = ['', '#010f47'];
-                                    titles[2] = 'and enjoy making appointments';
-                                    times[2] = 'this place';
-                                    eventData[2] = ['So welcome -', '#d90000'];
+                                    titles[2] = 'So welcome to 4D CAL! Hope you enjoy it!';
+                                    times[2] = '';
+                                    eventData[2] = ['', '#d90000'];
                                     break;
                                 } else if(j==1) {
-                                    titles[j] = 'You\'re free';
-                                    times[j] = 'this time';
-                                    eventData[j] = ['Enjoy!', '#024d25'];
+                                    titles[j] = 'Only one appointment coming up. That means:';
+                                    times[j] = '';
+                                    eventData[j] = ['', '#024d25'];
                                 } else if(j==2) {
-                                    titles[j] = 'Nothing more';
-                                    times[j] = 'the moment';
+                                    titles[j] = 'Nothing more at';
+                                    times[j] = 'the moment.';
                                     eventData[j] = ['Free Time!', '#024d25'];
                                 }
                             }
@@ -652,16 +656,16 @@ $(document).ready(function() {
                             setTimeout(function() {
                                 fromFullscreenToTop('hello', 25, 75, '#04756f', eventData[0][1]);
                                 setTimeout(function() {
-                                    changeFullscreen('hello', 'nextaptmnt', eventData[0][0]+' '+titles[0]+' at '+times[0]+'.', eventData[0][1]);
+                                    changeFullscreen('hello', 'nextaptmnt', eventData[0][0]+' '+titles[0]+times[0], eventData[0][1]);
                                 }, 1100);
                                 setTimeout(function() {
                                     fromFullscreenToTop('nextaptmnt', 25, 50, eventData[0][1], eventData[1][1]);
                                     setTimeout(function() {
-                                        changeFullscreen('nextaptmnt', '2ndaptmnt', eventData[1][0]+' '+titles[1]+' at '+times[1]+'.', eventData[1][1]);
+                                        changeFullscreen('nextaptmnt', '2ndaptmnt', eventData[1][0]+' '+titles[1]+times[1], eventData[1][1]);
                                         setTimeout(function() {
                                             fromFullscreenToTop('2ndaptmnt', 25, 25, eventData[1][1], eventData[2][1])
                                             setTimeout(function() {
-                                                changeFullscreen('2ndaptmnt', '3rdaptmnt', eventData[2][0]+' '+titles[2]+' at '+times[2]+'.', eventData[2][1]);
+                                                changeFullscreen('2ndaptmnt', '3rdaptmnt', eventData[2][0]+' '+titles[2]+times[2], eventData[2][1]);
                                                 setTimeout(function() {
                                                     toggleCalendar();
                                                     setTimeout(function() {
