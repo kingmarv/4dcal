@@ -151,7 +151,7 @@ $(document).ready(function() {
                         $('#back_fullscreen').css({'opacity': '0', 'cursor': 'auto'});
                     }
                     state = 'newapt' + (currentScreen-1);
-                    console.log($('#fullscreen div:eq(' + (currentScreen-1) + ')').attr('id'));
+                    //console.log($('#fullscreen div:eq(' + (currentScreen-1) + ')').attr('id'));
                     changeFullscreen($('#fullscreen div:eq(' + (currentScreen-1) + ')').attr('id'), $('#fullscreen div:eq(' + (currentScreen-2) + ')').attr('id'));
                 }
             }
@@ -363,7 +363,7 @@ $(document).ready(function() {
             $(obj).focusin(function() {
                 $(obj).css({'width': '45%', 'background-color': 'rgba(0,0,0,0.3)'});
                 fe = $(this).attr('id');
-                console.log(fe);
+                //console.log(fe);
             });
             
             $(obj).focusout(function() {
@@ -1010,7 +1010,7 @@ $(document).ready(function() {
         var i=0;
         if(events[i]!=undefined) {
             while(new Date(events[i].start + 'Z').getTime()<today.getTime()) {
-                console.log(new Date(events[i].start).getTime() + '#' + today.getTime());
+                //console.log(new Date(events[i].start).getTime() + '#' + today.getTime());
                 i++;
                 if(events[i]==undefined) {
                     break;
@@ -1018,7 +1018,7 @@ $(document).ready(function() {
             }
             if(events[i]!=undefined) {
                 while(new Date(events[i].start + 'Z').getTime()<today.getTime()+(24*3600*1000)) {
-                    alert(events[i].start);
+                    //alert(events[i].start);
                     eventdate = new Date(new Date(events[i].start + 'Z').getTime()-(3600*1000*currentTimezone));
                     eventdend = new Date(new Date(events[i].end + 'Z').getTime()-(3600*1000*currentTimezone));
                     if(eventdate.getDate() == eventdend.getDate()) {
@@ -1670,17 +1670,14 @@ $(document).ready(function() {
     */
     function preciseHeight(id,start,dur,day,allday,color){
         var unit = 35.4;
-        var timepoint=start;
         var pix=0;
         var step = 0.0166;
         for(pl=0;pl<dur;pl+=step){
             pix += unit*step;
         }
         var maxheight=$("#views #eiwc").height()-preciseStart(start);
-        if(pix>maxheight){
-            //if(allday!=1){
-                drawOffset(id,(pix-maxheight),day,color);
-           // }
+        if(pix>maxheight && ((start + dur) != 24)){
+            drawOffset(id,(pix-maxheight),day,color);
             return (maxheight+50)+"px";
         }
         return pix+"px"; 
