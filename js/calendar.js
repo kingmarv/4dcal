@@ -882,6 +882,8 @@ $(document).ready(function() {
                                 state = 'calendar';
                                 $('#close_fullscreen').css('opacity', '1');
                                 toggleCalendar();
+                                $('#calendar_wrapper #headline #toggle_view #monthview').css({'border-radius': '0', 'background-color': '#04756f'});
+                                $('#calendar_wrapper #headline #toggle_view #weekview').css({'border-radius': '0', 'background-color': '#04756f'});
                             }, 4000);
                         });
                     }
