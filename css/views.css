@@ -132,6 +132,7 @@
 }
 
 #views #eiwc{
+    overflow-y:hidden;
     margin-left:4.5%;
     height:899px;
     margin-top:-888px;

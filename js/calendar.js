@@ -1582,17 +1582,18 @@ $(document).ready(function() {
             }
             
             $(".eventinweek").each(function (){
-                co = 0;
                 day = $(this).attr("id");
+                divs = [];
                 $("#"+day+">div").each(function (){
-                    co++;
-                    if(co>1){
-                        ec = $(this).attr("class");  
-                        $("#views #"+day+"> div").css("width","45%"); 
-                        $("#views #"+day+"> div").css("float","left");
-                        $("#views #"+day+"> ."+ec).css("margin-left","55%"); 
+                    if($(this).attr('id') != undefined){
+                        divs.push('#'+$(this).attr('id'));     
+                    }else{
+                        divs.push('.'+$(this).attr('class')); 
                     }
                 });
+                if(divs.length > 1){
+                   checkCollision(divs); 
+                }
             });
             
             $(".eventinweek > div").on("click",function(){
@@ -1600,6 +1601,47 @@ $(document).ready(function() {
                 id = parseInt(rx.exec($(this).attr("class")));
                 drawDetailView(id);
             });
+        }
+        
+    }
+    
+    function checkCollision(divarray){
+        for(i=0;i<divarray.length;i++){
+            for(j=1;j<divarray.length;j++){
+                if(i!=j){
+                    $div1 = $(divarray[i]);
+                    $div2 = $(divarray[j]);
+                    
+                    if($div1.attr('id') == undefined){
+                        x1 = $div1.offset().left;
+                        y1 = $div1.offset().top;
+                        h1 = $div1.outerHeight(true);
+                        w1 = $div1.outerWidth(true);
+                        b1 = y1 + h1;
+                        r1 = x1 + w1;
+                        x2 = $div2.offset().left;
+                        y2 = $div2.offset().top;
+                        h2 = $div2.outerHeight(true);
+                        w2 = $div2.outerWidth(true);
+                        b2 = y2 + h2;
+                        r2 = x2 + w2;
+                        
+                        if (!(b1 < y2 || y1 > b2 || r1 < x2 || x1 > r2)){
+                            $div1.css("width","45%"); 
+                            $div2.css("width","45%"); 
+                            $div1.css("float","left");
+                            $div2.css("float","left");
+                            $div2.css("margin-left","55%");  
+                        }
+                    }else{
+                        $div1.css("width","45%"); 
+                        $div2.css("width","45%"); 
+                        $div1.css("float","left");
+                        $div2.css("float","left");
+                        $div2.css("margin-left","55%");  
+                    }
+                }
+            }
         }
         
     }
@@ -1701,6 +1743,7 @@ $(document).ready(function() {
         }
         var maxheight=$("#views #eiwc").height()-preciseStart(start);
         if(pix>maxheight && ((start + dur) != 24)){
+            $('.event-'+id).attr('id','origin-'+id);
             drawOffset(id,(pix-maxheight),day,color);
             return (maxheight+50)+"px";
         }
@@ -1731,18 +1774,17 @@ $(document).ready(function() {
         date=year+"-"+month+"-"+day;
         var maxheight = $("#views #eiwc").height();
         if(pix>maxheight){
-            $("#views #"+date).append("<div id='offset-"+day+"' class='event-"+id+"'></div>");
-            $("#views #offset-"+day).css("height",(maxheight+50)+"px");
-            $("#views #offset-"+day).css("background-color",color);
-            $("#views #offset-"+day).css("border-top","none");  
+            $("#views #"+date).append("<div id='offset-"+day+"-"+id+"' class='event-"+id+"'></div>");
+            $("#views #offset-"+day+"-"+id).css("height",(maxheight+50)+"px");
+            $("#views #offset-"+day+"-"+id).css("background-color",color);
+            $("#views #offset-"+day+"-"+id).css("border-top","none");  
             drawOffset(id,(pix-maxheight),date,color);
         }else{
-            $("#views #"+date).append("<div id='offset-"+day+"'></div>");
-            $("#views #offset-"+day).css("height",pix+"px");
-            $("#views #offset-"+day).css("background-color",color);
-            $("#views #offset-"+day).css("border-top","none");
+            $("#views #"+date).append("<div id='offset-"+day+"-"+id+"'></div>");
+            $("#views #offset-"+day+"-"+id).css("height",pix+"px");
+            $("#views #offset-"+day+"-"+id).css("background-color",color);
+            $("#views #offset-"+day+"-"+id).css("border-top","none");
         }
-        oss=1;
     }
     
     /**
