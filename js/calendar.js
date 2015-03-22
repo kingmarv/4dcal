@@ -160,6 +160,7 @@ $(document).ready(function() {
         $('#calendar_wrapper #headline #toggle_view #weekview').click(function() {
             if(viewstate==0){
                 $("#views #days").prepend("<div class='time' id='time' style='float:left'>&nbsp;</div>");
+                fwr = parseInt($('#views #' + isaa.toISOString().slice(0,10)).parent().attr('id').slice(1,2));
                 changeToWeekView(fwr);
                 viewstate=1;
                 $('#calendar_wrapper #headline #toggle_view #weekview').css({'border-radius': '1em', 'background-color': '#04959f'});
@@ -168,6 +169,7 @@ $(document).ready(function() {
                 toggleViews();
                 if(viewstate==0) {
                     $('#calendar_wrapper #headline #toggle_view #weekview').css({'border-radius': '1em', 'background-color': '#04959f'});
+                    fwr = parseInt($('#views #' + isaa.toISOString().slice(0,10)).parent().attr('id').slice(1,2));
                     changeToWeekView(fwr);
                     viewstate=1
                 } else {
@@ -813,6 +815,8 @@ $(document).ready(function() {
                 }
                 
                 /** TIMEZONE FIX **/
+                /*currentTimezone = (((new Date(aptstart + 'Z').getTimezoneOffset())/60)*(-1));
+                currTimezString = 'GMT'+((currentTimezone<0) ? '-' : '+')+('0'+Math.floor(Math.abs(currentTimezone))).slice(-2)+('0'+(((Math.abs(currentTimezone)-Math.floor(Math.abs(currentTimezone))))*60)).slice(-2);*/
                 try {
                     aptstart = new Date((new Date(aptstart + 'Z').getTime())+(1000*3600*currentTimezone*-1)).toISOString().substr(0,16);
                     aptend = new Date((new Date(aptend + 'Z').getTime())+(1000*3600*currentTimezone*-1)).toISOString().substr(0,16);
@@ -834,6 +838,8 @@ $(document).ready(function() {
                     'allday': 0,//aptalldaynum,
                     'webpage': $('#aptwebsite').val()
                 }, function(data, success) {
+                    /*currentTimezone = (isaa.getTimezoneOffset()/60)*(-1);
+                    currTimezString = 'GMT'+((currentTimezone<0) ? '-' : '+')+('0'+Math.floor(Math.abs(currentTimezone))).slice(-2)+('0'+(((Math.abs(currentTimezone)-Math.floor(Math.abs(currentTimezone))))*60)).slice(-2);*/
                     if(data.error!=undefined || timeerror == true) {
                         changeFullscreen('image', 'summary', 'Oh Snap!<br>#' + data.error.id + ': ' + data.error.text + '<br>Please contact <a href="http://twitter.com/4dialects">us</a> about this error so we can fix it!', '#8f0000');
                     } else {
@@ -1022,6 +1028,9 @@ $(document).ready(function() {
                         });
                         drawListView(listViewDay);
                         drawMonthView(); //!IMPORTANT
+                        if(viewstate==1) {
+                            changeToWeekView(fwr);
+                        }
                         if(successFunc!=undefined) {
                             successFunc(data, success);
                         }
@@ -1032,6 +1041,8 @@ $(document).ready(function() {
     function drawListView(dayaddition) {
         $('#calendar_wrapper #appointment_list .aptlst').remove();
         $('#calendar_wrapper #appointment_list div').css('display', 'none');
+        /*currentTimezone = (((new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()+dayaddition, currentTimezone, 0, 0, 0).getTimezoneOffset())/60)*(-1));
+        currTimezString = 'GMT'+((currentTimezone<0) ? '-' : '+')+('0'+Math.floor(Math.abs(currentTimezone))).slice(-2)+('0'+(((Math.abs(currentTimezone)-Math.floor(Math.abs(currentTimezone))))*60)).slice(-2);*/
         today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()+dayaddition, currentTimezone, 0, 0, 0);
         isaa = today;
         if(state.split('_')[0]!='detail') {
@@ -1045,7 +1056,7 @@ $(document).ready(function() {
         } else if(dayaddition==-1) {
             $('#calendar_wrapper #day #current').html('Yesterday');
         } else {
-            $('#calendar_wrapper #day #current').html(today.getUTCFullYear() + '/' + ('0' + (today.getUTCMonth()+1)).slice(-2) + '/' + ('0' + today.getUTCDate()).slice(-2));
+            $('#calendar_wrapper #day #current').html(today.getFullYear() + '/' + ('0' + (today.getMonth()+1)).slice(-2) + '/' + ('0' + today.getDate()).slice(-2));
         }
         thisDay = [];
         var i=0;
@@ -1464,6 +1475,8 @@ $(document).ready(function() {
             date2 = new Date();
             timeDiff = date1.getTime() - date2.getTime();
             diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            $('#calendar_wrapper #headline #toggle_view #monthview').css({'border-radius': '0', 'background-color': '#04756f'});
+            $('#calendar_wrapper #headline #toggle_view #weekview').css({'border-radius': '0', 'background-color': '#04756f'});
             toggleViews();
             listViewDay = diffDays;
             drawListView(listViewDay);
@@ -1669,6 +1682,7 @@ $(document).ready(function() {
         $("#views .event-"+id).append("<div class='eventtitle'>"+title+"</div>");
         $("#views .event-"+id).css("position","absolute");
         $("#views .event-"+id).css("z-index",id);
+        $("#views .event-"+id).css("overflow", "hidden");
         color = getEventTimeData(start);
         $("#views .event-"+id).css("background-color",color[1]);
         $("#views .event-"+id).css("margin-top",preciseStart(startpoint)+"px");
