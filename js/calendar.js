@@ -558,7 +558,7 @@ $(document).ready(function() {
             $('#views').css('margin-top', '0px');
             if($('#calendar_wrapper #headline #toggle_view #weekview').css('background-color')=='rgb(4, 149, 159)') {
                 changeToWeekView(fwr);
-                viewstate=1
+                viewstate=1;
             }
         }
     }
