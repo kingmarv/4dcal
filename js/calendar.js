@@ -139,8 +139,41 @@ $(document).ready(function() {
             toggleStayLoggedIn();
         });
         
-        $('#calendar_wrapper #headline #toggle_view').click(function() {
-            toggleViews();
+        $('#calendar_wrapper #headline #toggle_view #monthview').click(function() {
+            if(viewstate==1){
+                $("#views #time").remove();
+                $("#views #container > div").remove();
+                viewstate=0;
+                createMonthView(cm,cy);
+                $('#calendar_wrapper #headline #toggle_view #monthview').css({'border-radius': '1em', 'background-color': '#04959f'});
+                $('#calendar_wrapper #headline #toggle_view #weekview').css({'border-radius': '0', 'background-color': '#04756f'});
+            } else if(viewstate==0 || viewstate==3) {
+                toggleViews();
+                if(viewstate==0) {
+                    $('#calendar_wrapper #headline #toggle_view #monthview').css({'border-radius': '1em', 'background-color': '#04959f'});
+                } else {
+                    $('#calendar_wrapper #headline #toggle_view #monthview').css({'border-radius': '0', 'background-color': '#04756f'});
+                }
+            }
+        });
+        
+        $('#calendar_wrapper #headline #toggle_view #weekview').click(function() {
+            if(viewstate==0){
+                $("#views #days").prepend("<div class='time' id='time' style='float:left'>&nbsp;</div>");
+                changeToWeekView(fwr);
+                viewstate=1;
+                $('#calendar_wrapper #headline #toggle_view #weekview').css({'border-radius': '1em', 'background-color': '#04959f'});
+                $('#calendar_wrapper #headline #toggle_view #monthview').css({'border-radius': '0', 'background-color': '#04756f'});
+            } else if(viewstate==1 || viewstate==3) {
+                toggleViews();
+                if(viewstate==0) {
+                    $('#calendar_wrapper #headline #toggle_view #weekview').css({'border-radius': '1em', 'background-color': '#04959f'});
+                    changeToWeekView(fwr);
+                    viewstate=1
+                } else {
+                    $('#calendar_wrapper #headline #toggle_view #weekview').css({'border-radius': '0', 'background-color': '#04756f'});
+                }
+            }
         });
         
         $('#back_fullscreen').click(function() {
@@ -482,7 +515,7 @@ $(document).ready(function() {
 
     function toggleSettings() {
         if($('#calendar_wrapper #headline #settings #content').css('width')=='0px') {
-            $('#calendar_wrapper #headline #settings #content').css({'padding': '0.125em 0.5em', 'width': '90%'});
+            $('#calendar_wrapper #headline #settings #content').css({'padding': '0.125em 0.5em', 'width': '85%'});
             $('#calendar_wrapper #headline #text').css('opacity', '0');
             setTimeout(function() {
                 $('#calendar_wrapper #headline #text').css({'width': '0px', 'margin-left': '-200%'});
@@ -523,6 +556,10 @@ $(document).ready(function() {
             $("#views #container > div").remove();
             createMonthView(cm,cy);
             $('#views').css('margin-top', '0px');
+            if($('#calendar_wrapper #headline #toggle_view #weekview').css('background-color')=='rgb(4, 149, 159)') {
+                changeToWeekView(fwr);
+                viewstate=1
+            }
         }
     }
 
@@ -1214,23 +1251,6 @@ $(document).ready(function() {
         
     $("#views #forward").click(function(){
         changeView(1);
-    });
-    
-    $("#views #weekview").click(function(){
-        if(viewstate==0){
-            $("#views #days").prepend("<div class='time' id='time' style='float:left'>&nbsp;</div>");
-            changeToWeekView(fwr);
-            viewstate=1;
-        }
-    });
-    
-    $("#views #monthview").click(function(){
-        if(viewstate==1){
-            $("#views #time").remove();
-            $("#views #container > div").remove();
-            viewstate=0;
-            createMonthView(cm,cy);
-        }
     });
     
     $(document).keydown(function(e){

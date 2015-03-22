@@ -247,6 +247,7 @@ html, body {
 #calendar_wrapper #headline #toggle_view img {
     height:1em;
     width:auto;
+    transition: 0.5s ease;
 }
 
 #calendar_wrapper #headline #new_entry {
